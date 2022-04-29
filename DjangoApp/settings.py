@@ -31,7 +31,7 @@ ALLOWED_HOSTS = ['139.162.139.161']
 # Application definition
 
 INSTALLED_APPS = [
-    'IraqiStore.apps.IraqistoreConfig',
+    'IraqiStore.apps.IraqistoreConfig'
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
