@@ -2,14 +2,21 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from IraqiStore.models import Account, Contact, Inventory, Order, OrderItem, Product, Quote, QutoeItem
-from .serializers import accountSerializer, contactSerializer, inventorySerializer, orderItemSerializer, orderSerializer, productSerializer, quoteItemSerializer, quoteSerializer
+from IraqiStore.models import LOV, Account, Contact, Inventory, Order, OrderItem, Product, Quote, QutoeItem
+from .serializers import accountSerializer, contactSerializer, inventorySerializer, lovSerializer, orderItemSerializer, orderSerializer, productSerializer, quoteItemSerializer, quoteSerializer
 
 
 def iraqi_view(request):
     return HttpResponse('hello')
 
 # Create your views here.
+
+
+@api_view(['GET'])
+def get_lovs(request):
+    lov = LOV.objects.all()
+    serializer = lovSerializer(lov, many=True)
+    return Response(serializer.data)
 
 
 @api_view(['GET'])

@@ -1,5 +1,11 @@
 from rest_framework import serializers
-from IraqiStore.models import Account, Contact, Order, OrderItem, Product, Inventory, Quote, QutoeItem
+from IraqiStore.models import LOV, Account, Contact, Order, OrderItem, Product, Inventory, Quote, QutoeItem
+
+
+class lovSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LOV
+        fields = ('type', 'name', 'value')
 
 
 class productSerializer(serializers.ModelSerializer):

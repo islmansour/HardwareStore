@@ -10,6 +10,13 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 # Create your models here.
 
 
+class LOV(models.Model):
+    type = models.CharField(max_length=50, blank=True, null=True)
+    name = models.CharField(max_length=50, blank=True, null=True)
+    value = models.CharField(max_length=50, blank=True, null=True)
+    active = models.BooleanField(default=True)
+
+
 class Product(models.Model):
     name = models.CharField(max_length=255)  # 1
     desc = models.TextField(blank=True, null=True)  # 2
@@ -21,6 +28,8 @@ class Product(models.Model):
     active = models.BooleanField(default=True)  # 7
     discount = models.FloatField(default=0, blank=True, null=True,
                                  validators=[MinValueValidator(0), MaxValueValidator(100)])
+    category = models.CharField(max_length=50, blank=True, null=True)
+    sub_category = models.CharField(max_length=50, blank=True, null=True)
     # need to add attributes
 
 
@@ -64,22 +73,15 @@ class Account(models.Model):
 
 
 class Quote(models.Model):
-    STATUS = (
-        (('1'), ('חדשה')),
-        (('2'), ('מאושרת')),
-        (('3'), ('ממתינה לאישור')),
-        (('4'), ('מבוטלת'))
-    )
-
+    _status = LOV.objects.filter(type='QUOTE_STATUS', active=True).all()
     quoteDate = models.DateField(default=now)
     accountId = models.ForeignKey(Account, on_delete=models.DO_NOTHING)
     contactId = models.ForeignKey(Contact, on_delete=models.DO_NOTHING)
     status = models.CharField(
         max_length=32,
-        choices=STATUS,
-        default=1,
     )
     notes = models.TextField(blank=True, null=True)
+    delivery = models.BooleanField(default=False)
     created = models.DateTimeField(default=now, editable=False)  # 5
     ceeated_by = models.IntegerField(blank=True, null=True)  # 4
 
@@ -95,22 +97,11 @@ class QutoeItem(models.Model):
 
 
 class Order(models.Model):
-    STATUS = (
-        (('1'), ('חדשה')),
-        (('2'), ('מאושרת')),
-        (('3'), ('ממתינה לאישור')),
-        (('4'), ('בדרך ללקוח')),
-        (('5'), ('נמסר')),
-        (('6'), ('מבוטלת'))
-    )
-
     orderDate = models.DateField(default=now)
     accountId = models.ForeignKey(Account, on_delete=models.DO_NOTHING)
     contactId = models.ForeignKey(Contact, on_delete=models.DO_NOTHING)
     status = models.CharField(
         max_length=32,
-        choices=STATUS,
-        default='1',
     )
     street = models.CharField(max_length=255, blank=True, null=True)
     street2 = models.CharField(max_length=255, blank=True, null=True)
@@ -118,6 +109,7 @@ class Order(models.Model):
     wazeLink = models.CharField(max_length=255, blank=True, null=True)
     notes = models.TextField(blank=True, null=True)
     quoteId = models.ForeignKey(Quote, on_delete=models.DO_NOTHING)
+    delivery = models.BooleanField(default=False)
     created = models.DateTimeField(default=now, editable=False)  # 5
     ceeated_by = models.IntegerField(blank=True, null=True)  # 4
 
