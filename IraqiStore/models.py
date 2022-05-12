@@ -132,3 +132,14 @@ class News(models.Model):
     active = models.BooleanField(default=True)
     created = models.DateTimeField(default=now, editable=False)  # 5
     ceeated_by = models.IntegerField(blank=True, null=True)
+
+
+class Delivery(models.Model):
+    date = models.DateTimeField()
+    accountId = models.ForeignKey(Account, on_delete=models.DO_NOTHING)
+    contactId = models.ForeignKey(Contact, on_delete=models.DO_NOTHING)
+    status = models.CharField(
+        max_length=32,
+    )
+    wazeLink = models.CharField(max_length=255, blank=True, null=True)
+    approvalLink = models.CharField(max_length=255, blank=True, null=True)

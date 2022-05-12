@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from IraqiStore.models import LOV, Account, Contact, News, Order, OrderItem, Product, Inventory, Quote, QutoeItem
+from IraqiStore.models import LOV, Account, Contact, Delivery, News, Order, OrderItem, Product, Inventory, Quote, QutoeItem
 
 
 class lovSerializer(serializers.ModelSerializer):
@@ -59,4 +59,10 @@ class quoteItemSerializer(serializers.ModelSerializer):
 class newsSerializer(serializers.ModelSerializer):
     class Meta:
         model = News
+        fields = '__all__'
+
+
+class deliverySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Delivery
         fields = '__all__'
