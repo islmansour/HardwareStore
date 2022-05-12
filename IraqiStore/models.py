@@ -1,5 +1,6 @@
 from email.quoprimime import quote
 from itertools import product
+from pydoc import describe
 #import numbers
 #from statistics import quantiles
 from django.db import models
@@ -123,3 +124,11 @@ class OrderItem(models.Model):
     quoteItemId = models.ForeignKey(QutoeItem, on_delete=models.DO_NOTHING)
     created = models.DateTimeField(default=now, editable=False)  # 5
     ceeated_by = models.IntegerField(blank=True, null=True)  # 4
+
+
+class News(models.Model):
+    desc = models.TextField(blank=True, null=True)
+    type = models.CharField(max_length=50, blank=True, null=True)
+    active = models.BooleanField(default=True)
+    created = models.DateTimeField(default=now, editable=False)  # 5
+    ceeated_by = models.IntegerField(blank=True, null=True)

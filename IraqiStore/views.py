@@ -2,8 +2,8 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from IraqiStore.models import LOV, Account, Contact, Inventory, Order, OrderItem, Product, Quote, QutoeItem
-from .serializers import accountSerializer, contactSerializer, inventorySerializer, lovSerializer, orderItemSerializer, orderSerializer, productSerializer, quoteItemSerializer, quoteSerializer
+from IraqiStore.models import LOV, Account, Contact, Inventory, News, Order, OrderItem, Product, Quote, QutoeItem
+from .serializers import accountSerializer, contactSerializer, inventorySerializer, lovSerializer, newsSerializer, orderItemSerializer, orderSerializer, productSerializer, quoteItemSerializer, quoteSerializer
 
 
 def iraqi_view(request):
@@ -257,5 +257,37 @@ def upsert_order_item(request, pk):
                 serializer.save()
         except:
             return('Error while upserting an order item.')
+
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def get_news(request):
+    news = News.objects.all()
+    serializer = newsSerializer(news, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def get_single_news(request, pk):
+    news = News.objects.get(id=pk)
+    serializer = newsSerializer(news, many=False)
+    return Response(serializer.data)
+
+
+@api_view(['POST'])
+def upsert_news(request, pk):
+    try:
+        record = News.objects.get(id=pk)
+        serializer = newsSerializer(instance=record, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+    except:
+        try:
+            serializer = newsSerializer(data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+        except:
+            return('Error while upserting a news.')
 
     return Response(serializer.data)
