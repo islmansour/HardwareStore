@@ -155,6 +155,20 @@ def get_quotes(request):
 
 
 @api_view(['GET'])
+def get_quotes_by_account(request, accountId):
+    quotes = Quote.objects.filter(accountId=int(accountId))
+    serializer = quoteSerializer(quotes, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def get_quotes_by_contact(request, contactId):
+    quotes = Quote.objects.filter(contactId=int(contactId))
+    serializer = quoteSerializer(quotes, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
 def get_single_quote(request, pk):
     quotes = Quote.objects.get(id=pk)
     serializer = quoteSerializer(quotes, many=False)
@@ -186,6 +200,13 @@ def get_quote_item(request):
     return Response(serializer.data)
 
 
+@api_view(['GET'])
+def get_quote_item_by_quote(request, quoteId):
+    items = QutoeItem.objects.filter(quoteId=int(quoteId))
+    serializer = quoteItemSerializer(items, many=True)
+    return Response(serializer.data)
+
+
 @api_view(['POST'])
 def upsert_quote_item(request, pk):
     try:
@@ -207,6 +228,20 @@ def upsert_quote_item(request, pk):
 @api_view(['GET'])
 def get_orders(request):
     orders = Order.objects.all()
+    serializer = orderSerializer(orders, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def get_orders_by_account(request, accountId):
+    orders = Order.objects.filter(accountId=int(accountId))
+    serializer = orderSerializer(orders, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def get_orders_by_contact(request, contactId):
+    orders = Order.objects.filter(contactId=int(contactId))
     serializer = orderSerializer(orders, many=True)
     return Response(serializer.data)
 
@@ -239,6 +274,13 @@ def upsert_order(request, pk):
 @api_view(['GET'])
 def get_order_item(request):
     items = OrderItem.objects.all()
+    serializer = orderItemSerializer(items, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def get_order_item_by_order(request, orderId):
+    items = OrderItem.objects.filter(orderId=int(orderId))
     serializer = orderItemSerializer(items, many=True)
     return Response(serializer.data)
 
@@ -296,6 +338,20 @@ def upsert_news(request, pk):
 @api_view(['GET'])
 def get_deliverys(request):
     deliverys = Delivery.objects.all()
+    serializer = deliverySerializer(deliverys, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def get_deliverys_by_account(request, accountId):
+    deliverys = Delivery.objects.filter(accountId=int(accountId))
+    serializer = deliverySerializer(deliverys, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def get_deliverys_by_contact(request, contactId):
+    deliverys = Delivery.objects.filter(contactId=int(contactId))
     serializer = deliverySerializer(deliverys, many=True)
     return Response(serializer.data)
 

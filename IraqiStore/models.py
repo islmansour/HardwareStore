@@ -121,7 +121,8 @@ class OrderItem(models.Model):
     quantity = models.FloatField(blank=True, null=True)
     price = models.FloatField(blank=True, null=True)
     notes = models.TextField(blank=True, null=True)
-    quoteItemId = models.ForeignKey(QutoeItem, on_delete=models.DO_NOTHING)
+    quoteItemId = models.ForeignKey(
+        QutoeItem, on_delete=models.DO_NOTHING, blank=True, null=True)
     created = models.DateTimeField(default=now, editable=False)  # 5
     ceeated_by = models.IntegerField(blank=True, null=True)  # 4
 
@@ -136,8 +137,10 @@ class News(models.Model):
 
 class Delivery(models.Model):
     date = models.DateTimeField()
-    accountId = models.ForeignKey(Account, on_delete=models.DO_NOTHING)
-    contactId = models.ForeignKey(Contact, on_delete=models.DO_NOTHING)
+    accountId = models.ForeignKey(
+        Account, on_delete=models.DO_NOTHING, blank=True, null=True)
+    contactId = models.ForeignKey(
+        Contact, on_delete=models.DO_NOTHING, blank=True, null=True)
     status = models.CharField(
         max_length=32,
     )
