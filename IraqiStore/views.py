@@ -56,7 +56,7 @@ def upsert_product(request, pk):
                 serializer.save()
         except:
             HttpResponse("Unable to upsert a product.", status=400)
-    return HttpResponse(serializer.data)
+    return HttpResponse("Succeeded to upsert a product.", status=201)
 
 
 @api_view(['GET'])
