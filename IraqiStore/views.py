@@ -45,7 +45,7 @@ def upsert_product(request, pk):
 
     logging.debug(request)
     try:
-        record = Product.objects.get(id=pk)
+        record = Product.objects.get(id=int(pk))
         serializer = productSerializer(instance=record, data=request.data)
         if serializer.is_valid():
             serializer.save()
