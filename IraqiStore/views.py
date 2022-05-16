@@ -1,9 +1,14 @@
+import logging
 from django.shortcuts import render
 from django.http import HttpResponse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from IraqiStore.models import LOV, Account, Contact, Delivery, Inventory, News, Order, OrderItem, Product, Quote, QutoeItem
 from .serializers import accountSerializer, contactSerializer, deliverySerializer, inventorySerializer, lovSerializer, newsSerializer, orderItemSerializer, orderSerializer, productSerializer, quoteItemSerializer, quoteSerializer
+
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s %(levelname)s %(message)s',
+                    filename='myapp2.log')
 
 
 def iraqi_view(request):
@@ -14,6 +19,7 @@ def iraqi_view(request):
 
 @api_view(['GET'])
 def get_lovs(request):
+    logging.debug(request)
     lov = LOV.objects.all()
     serializer = lovSerializer(lov, many=True)
     return Response(serializer.data)
@@ -35,6 +41,9 @@ def get_single_product(request, pk):
 
 @api_view(['POST'])
 def upsert_product(request, pk):
+    logging.info(pk)
+
+    logging.debug(request)
     try:
         record = Product.objects.get(id=pk)
         serializer = productSerializer(instance=record, data=request.data)
