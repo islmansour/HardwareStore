@@ -25,7 +25,7 @@ class Product(models.Model):
     price = models.FloatField(blank=True, null=True)  # 3
     created = models.DateTimeField(default=now, editable=False)  # 4
     ceeated_by = models.IntegerField(blank=True, null=True)  # 5
-    img = models.URLField(blank=True, null=True)  # 6
+    img = models.CharField(max_length=2048, blank=True, null=True)  # 6
     active = models.BooleanField(default=True)  # 7
     discount = models.FloatField(default=0, blank=True, null=True,
                                  validators=[MinValueValidator(0), MaxValueValidator(100)])
