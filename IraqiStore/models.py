@@ -36,7 +36,7 @@ class Product(models.Model):
 
 class Inventory(models.Model):
     product_id = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity = models.FloatField()
+    quantity = models.FloatField(blank=True, null=True)
     created = models.DateTimeField(default=now, editable=False)  # 5
     ceeated_by = models.IntegerField(blank=True, null=True)  # 4
 
@@ -75,12 +75,12 @@ class Account(models.Model):
 
 class Quote(models.Model):
     _status = LOV.objects.filter(type='QUOTE_STATUS', active=True).all()
-    quoteDate = models.DateField(default=now)
+    quoteDate = models.DateField(default=now, blank=True, null=True)
     accountId = models.ForeignKey(Account, on_delete=models.DO_NOTHING)
-    contactId = models.ForeignKey(Contact, on_delete=models.DO_NOTHING)
+    contactId = models.ForeignKey(
+        Contact, on_delete=models.DO_NOTHING, blank=True, null=True)
     status = models.CharField(
-        max_length=32,
-    )
+        max_length=32, blank=True, null=True)
     notes = models.TextField(blank=True, null=True)
     delivery = models.BooleanField(default=False)
     created = models.DateTimeField(default=now, editable=False)  # 5
@@ -98,18 +98,20 @@ class QutoeItem(models.Model):
 
 
 class Order(models.Model):
-    orderDate = models.DateField(default=now)
+    orderDate = models.DateField(default=now, blank=True, null=True)
     accountId = models.ForeignKey(Account, on_delete=models.DO_NOTHING)
-    contactId = models.ForeignKey(Contact, on_delete=models.DO_NOTHING)
+    contactId = models.ForeignKey(
+        Contact, on_delete=models.DO_NOTHING, blank=True, null=True)
     status = models.CharField(
-        max_length=32,
-    )
+        max_length=32, blank=True, null=True)
+
     street = models.CharField(max_length=255, blank=True, null=True)
     street2 = models.CharField(max_length=255, blank=True, null=True)
     town = models.CharField(max_length=50, blank=True, null=True)
     wazeLink = models.CharField(max_length=255, blank=True, null=True)
     notes = models.TextField(blank=True, null=True)
-    quoteId = models.ForeignKey(Quote, on_delete=models.DO_NOTHING)
+    quoteId = models.ForeignKey(
+        Quote, on_delete=models.DO_NOTHING, blank=True, null=True)
     delivery = models.BooleanField(default=False)
     created = models.DateTimeField(default=now, editable=False)  # 5
     ceeated_by = models.IntegerField(blank=True, null=True)  # 4

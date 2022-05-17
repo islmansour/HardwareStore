@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from IraqiStore.models import LOV, Account, Contact, Delivery, Inventory, News, Order, OrderItem, Product, Quote, QutoeItem
 from .serializers import accountSerializer, contactSerializer, deliverySerializer, inventorySerializer, lovSerializer, newsSerializer, orderItemSerializer, orderSerializer, productSerializer, quoteItemSerializer, quoteSerializer
+import json
 
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(levelname)s %(message)s',
@@ -41,9 +42,6 @@ def get_single_product(request, pk):
 
 @api_view(['POST'])
 def upsert_product(request, pk):
-    logging.info(pk)
-    record = None
-    serializer = None
     try:
         record = Product.objects.get(id=int(pk))
         serializer = productSerializer(instance=record, data=request.data)
@@ -54,7 +52,8 @@ def upsert_product(request, pk):
             serializer = productSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
-        except:
+        except Exception as e:
+            logging.info(e)
             HttpResponse("Unable to upsert a product.", status=400)
     return HttpResponse("Succeeded to upsert a product.", status=201)
 
@@ -144,15 +143,17 @@ def upsert_account(request, pk):
         serializer = accountSerializer(instance=record, data=request.data)
         if serializer.is_valid():
             serializer.save()
-    except:
+    except Exception as e:
         try:
             serializer = accountSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
-        except:
-            return('Error while upserting an account.')
 
-    return Response(serializer.data)
+        except Exception as e:
+            logging.debug(e)
+            return HttpResponse('Error while upserting an account.', status=400)
+
+    return HttpResponse('Account Created', status=201)
 
 
 @api_view(['GET'])
@@ -185,20 +186,26 @@ def get_single_quote(request, pk):
 
 @api_view(['POST'])
 def upsert_quote(request, pk):
+    logging.info('here')
+
     try:
         record = Quote.objects.get(id=pk)
         serializer = quoteSerializer(instance=record, data=request.data)
         if serializer.is_valid():
             serializer.save()
-    except:
+    except Exception as e:
+        logging.debug(e)
         try:
             serializer = quoteSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
-        except:
-            return('Error while upserting an quote.')
+            for i in serializer.errors:
+                logging.info("Err: " + i)
+        except Exception as e:
+            logging.debug(e)
+            HttpResponse('Error while upserting an quote.', status=400)
 
-    return Response(serializer.data)
+    return HttpResponse("Quote Created.", status=201)
 
 
 @api_view(['GET'])
@@ -263,20 +270,25 @@ def get_single_order(request, pk):
 
 @api_view(['POST'])
 def upsert_order(request, pk):
+    logging.info('Here')
     try:
         record = Order.objects.get(id=pk)
         serializer = orderSerializer(instance=record, data=request.data)
         if serializer.is_valid():
             serializer.save()
-    except:
+    except Exception as e:
+        logging.debug(e)
         try:
             serializer = orderSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
-        except:
-            return('Error while upserting an order.')
+            for i in serializer.errors:
+                logging.info("Err: " + i)
+        except Exception as e:
+            logging.debug(e)
+            return HttpResponse('Error while upserting an account.', status=400)
 
-    return Response(serializer.data)
+    return HttpResponse('Account Created', status=201)
 
 
 @api_view(['GET'])
