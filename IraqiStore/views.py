@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from IraqiStore.models import LOV, Account, Contact, Delivery, Inventory, News, Order, OrderItem, Product, Quote, QutoeItem
+from IraqiStore.models import LOV, Account, Contact, Delivery, Inventory, News, Order, OrderItem, Product, Quote, QutoeItem, User
 from .serializers import accountSerializer, contactSerializer, deliverySerializer, inventorySerializer, lovSerializer, newsSerializer, orderItemSerializer, orderSerializer, productSerializer, quoteItemSerializer, quoteSerializer
 import json
 
@@ -69,6 +69,13 @@ def get_inventory(request):
 def get_single_inventory(request, pk):
     inventory = Inventory.objects.get(id=pk)
     serializer = inventorySerializer(inventory, many=False)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def get_user_by_login(request, pk):
+    user = User.objects.filter(accountId=pk)
+    serializer = inventorySerializer(user, many=False)
     return Response(serializer.data)
 
 

@@ -16,6 +16,7 @@ urlpatterns = [
     path('order_list_by_account/<accountId>', views.get_orders_by_account),
     path('order_list_by_contact/<contactId>', views.get_orders_by_contact),
     path('order_item_list/<orderId>', views.get_order_item_by_order),
+    path('get_single_inventory/<str:pk', views.get_user_by_login),
     path('news_list', views.get_news),
     path('delivery_list', views.get_deliverys),
     path('delivery_list_by_account', views.get_deliverys_by_account),

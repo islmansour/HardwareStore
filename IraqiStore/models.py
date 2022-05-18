@@ -148,3 +148,12 @@ class Delivery(models.Model):
     )
     wazeLink = models.CharField(max_length=255, blank=True, null=True)
     approvalLink = models.CharField(max_length=255, blank=True, null=True)
+
+
+class User(models.Model):
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    login = models.CharField(max_length=50)
+    active = models.BooleanField(default=True)
+    created = models.DateTimeField(default=now, editable=False)  # 5
+    ceeated_by = models.IntegerField(blank=True, null=True)
