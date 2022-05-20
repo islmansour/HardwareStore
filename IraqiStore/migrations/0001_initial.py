@@ -16,16 +16,19 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Product',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=255)),
                 ('desc', models.TextField(blank=True, null=True)),
                 ('alias', models.CharField(max_length=255)),
                 ('price', models.FloatField(null=True)),
-                ('created', models.DateTimeField(default=django.utils.timezone.now, editable=False)),
+                ('created', models.DateTimeField(
+                    default=django.utils.timezone.now, editable=False)),
                 ('ceeated_by', models.IntegerField(null=True)),
                 ('img', models.URLField(null=True)),
                 ('active', models.BooleanField(default=True)),
-                ('discount', models.FloatField(default=0, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(100)])),
+                ('discount', models.FloatField(default=0, validators=[
+                 django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(100)])),
             ],
         ),
     ]

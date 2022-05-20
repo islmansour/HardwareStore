@@ -24,7 +24,7 @@ class Product(models.Model):
     alias = models.CharField(max_length=255, blank=True, null=True)
     price = models.FloatField(blank=True, null=True)  # 3
     created = models.DateTimeField(default=now, editable=False)  # 4
-    ceeated_by = models.IntegerField(blank=True, null=True)  # 5
+    created_by = models.IntegerField(blank=True, null=True)  # 5
     img = models.CharField(max_length=2048, blank=True, null=True)  # 6
     active = models.BooleanField(default=True)  # 7
     discount = models.FloatField(default=0, blank=True, null=True,
@@ -38,7 +38,7 @@ class Inventory(models.Model):
     product_id = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.FloatField(blank=True, null=True)
     created = models.DateTimeField(default=now, editable=False)  # 5
-    ceeated_by = models.IntegerField(blank=True, null=True)  # 4
+    created_by = models.IntegerField(blank=True, null=True)  # 4
 
 
 class Contact(models.Model):
@@ -54,7 +54,7 @@ class Contact(models.Model):
     town = models.CharField(max_length=50, blank=True, null=True)
     active = models.BooleanField(default=True)
     created = models.DateTimeField(default=now, editable=False)
-    ceeated_by = models.IntegerField(blank=True, null=True)
+    created_by = models.IntegerField(blank=True, null=True)
 
 
 class Account(models.Model):
@@ -70,7 +70,7 @@ class Account(models.Model):
     phone = models.CharField(max_length=10, blank=True, null=True)
     active = models.BooleanField(default=True)
     created = models.DateTimeField(default=now, editable=False)
-    ceeated_by = models.IntegerField(blank=True, null=True)
+    created_by = models.IntegerField(blank=True, null=True)
 
 
 class Quote(models.Model):
@@ -84,7 +84,7 @@ class Quote(models.Model):
     notes = models.TextField(blank=True, null=True)
     delivery = models.BooleanField(default=False)
     created = models.DateTimeField(default=now, editable=False)  # 5
-    ceeated_by = models.IntegerField(blank=True, null=True)  # 4
+    created_by = models.IntegerField(blank=True, null=True)  # 4
 
 
 class QutoeItem(models.Model):
@@ -94,7 +94,7 @@ class QutoeItem(models.Model):
     price = models.FloatField(blank=True, null=True)
     notes = models.TextField(blank=True, null=True)
     created = models.DateTimeField(default=now, editable=False)  # 5
-    ceeated_by = models.IntegerField(blank=True, null=True)  # 4
+    created_by = models.IntegerField(blank=True, null=True)  # 4
 
 
 class Order(models.Model):
@@ -114,7 +114,7 @@ class Order(models.Model):
         Quote, on_delete=models.DO_NOTHING, blank=True, null=True)
     delivery = models.BooleanField(default=False)
     created = models.DateTimeField(default=now, editable=False)  # 5
-    ceeated_by = models.IntegerField(blank=True, null=True)  # 4
+    created_by = models.IntegerField(blank=True, null=True)  # 4
 
 
 class OrderItem(models.Model):
@@ -126,7 +126,7 @@ class OrderItem(models.Model):
     quoteItemId = models.ForeignKey(
         QutoeItem, on_delete=models.DO_NOTHING, blank=True, null=True)
     created = models.DateTimeField(default=now, editable=False)  # 5
-    ceeated_by = models.IntegerField(blank=True, null=True)  # 4
+    created_by = models.IntegerField(blank=True, null=True)  # 4
 
 
 class News(models.Model):
@@ -134,7 +134,7 @@ class News(models.Model):
     type = models.CharField(max_length=50, blank=True, null=True)
     active = models.BooleanField(default=True)
     created = models.DateTimeField(default=now, editable=False)  # 5
-    ceeated_by = models.IntegerField(blank=True, null=True)
+    created_by = models.IntegerField(blank=True, null=True)
 
 
 class Delivery(models.Model):
@@ -151,9 +151,13 @@ class Delivery(models.Model):
 
 
 class User(models.Model):
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
-    login = models.CharField(max_length=50)
+    uid = models.CharField(max_length=256, blank=True, null=True)
+    first_name = models.CharField(max_length=50, blank=True, null=True)
+    last_name = models.CharField(max_length=50, blank=True, null=True)
+    login = models.CharField(max_length=50, blank=True, null=True)
     active = models.BooleanField(default=True)
     created = models.DateTimeField(default=now, editable=False)  # 5
-    ceeated_by = models.IntegerField(blank=True, null=True)
+    created_by = models.IntegerField(blank=True, null=True)
+
+    def __str__(self) -> str:
+        return self.first_name

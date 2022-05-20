@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from IraqiStore.models import LOV, Account, Contact, Delivery, Inventory, News, Order, OrderItem, Product, Quote, QutoeItem, User
-from .serializers import accountSerializer, contactSerializer, deliverySerializer, inventorySerializer, lovSerializer, newsSerializer, orderItemSerializer, orderSerializer, productSerializer, quoteItemSerializer, quoteSerializer
+from .serializers import accountSerializer, contactSerializer, deliverySerializer, inventorySerializer, lovSerializer, newsSerializer, orderItemSerializer, orderSerializer, productSerializer, quoteItemSerializer, quoteSerializer, userSerializer
 import json
 
 logging.basicConfig(level=logging.DEBUG,
@@ -73,10 +73,23 @@ def get_single_inventory(request, pk):
 
 
 @api_view(['GET'])
-def get_user_by_login(request, pk):
-    user = User.objects.filter(accountId=pk)
-    serializer = inventorySerializer(user, many=False)
-    return Response(serializer.data)
+def get_user_by_uid(request, pk):
+    try:
+        logging.debug(pk)
+
+        user = User.objects.filter(uid=pk)
+        logging.info(user)
+
+        serializer = userSerializer(user, many=True)
+
+        logging.info(serializer.data)
+
+        return Response(serializer.data)
+
+    except Exception as e:
+        logging.debug(e)
+
+    return HttpResponse('error getting user', status=500)
 
 
 @api_view(['POST'])
@@ -159,7 +172,7 @@ def upsert_account(request, pk):
         except Exception as e:
             logging.debug(e)
             return HttpResponse('Error while upserting an account.', status=400)
-
+    logging.info(serializer.data)
     return HttpResponse('Account Created', status=201)
 
 

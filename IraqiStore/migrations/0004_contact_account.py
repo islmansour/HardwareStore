@@ -15,7 +15,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Contact',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('first_name', models.CharField(max_length=50)),
                 ('last_name', models.CharField(max_length=50)),
                 ('phone', models.CharField(max_length=10, null=True)),
@@ -27,14 +28,16 @@ class Migration(migrations.Migration):
                 ('zip', models.IntegerField(null=True)),
                 ('town', models.CharField(max_length=50, null=True)),
                 ('active', models.BooleanField(default=True)),
-                ('created', models.DateTimeField(default=django.utils.timezone.now, editable=False)),
+                ('created', models.DateTimeField(
+                    default=django.utils.timezone.now, editable=False)),
                 ('ceeated_by', models.IntegerField(null=True)),
             ],
         ),
         migrations.CreateModel(
             name='Account',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('name', models.CharField(max_length=255)),
                 ('street', models.CharField(blank=True, max_length=255, null=True)),
                 ('street2', models.CharField(blank=True, max_length=255, null=True)),
@@ -44,9 +47,11 @@ class Migration(migrations.Migration):
                 ('email', models.EmailField(max_length=254, null=True)),
                 ('phone', models.CharField(max_length=10, null=True)),
                 ('active', models.BooleanField(default=True)),
-                ('created', models.DateTimeField(default=django.utils.timezone.now, editable=False)),
+                ('created', models.DateTimeField(
+                    default=django.utils.timezone.now, editable=False)),
                 ('ceeated_by', models.IntegerField(null=True)),
-                ('contact_id', models.ForeignKey(null=True, on_delete=django.db.models.deletion.DO_NOTHING, to='IraqiStore.contact')),
+                ('contact_id', models.ForeignKey(
+                    null=True, on_delete=django.db.models.deletion.DO_NOTHING, to='IraqiStore.contact')),
             ],
         ),
     ]

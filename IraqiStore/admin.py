@@ -1,5 +1,5 @@
 from django.contrib import admin
-from IraqiStore.models import Delivery, News, LOV, Account, Contact, Inventory, Order, OrderItem, Product, Quote, QutoeItem
+from IraqiStore.models import Delivery, News, LOV, Account, Contact, Inventory, Order, OrderItem, Product, Quote, QutoeItem, User
 
 
 # Register your models here.
@@ -14,3 +14,4 @@ admin.site.register(QutoeItem)
 admin.site.register(LOV)
 admin.site.register(News)
 admin.site.register(Delivery)
+admin .site.register(User)

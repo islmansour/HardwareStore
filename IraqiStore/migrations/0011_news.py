@@ -14,11 +14,13 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='News',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('desc', models.TextField(blank=True, null=True)),
                 ('type', models.CharField(blank=True, max_length=50, null=True)),
                 ('active', models.BooleanField(default=True)),
-                ('created', models.DateTimeField(default=django.utils.timezone.now, editable=False)),
+                ('created', models.DateTimeField(
+                    default=django.utils.timezone.now, editable=False)),
                 ('ceeated_by', models.IntegerField(blank=True, null=True)),
             ],
         ),

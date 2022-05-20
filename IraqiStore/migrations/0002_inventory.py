@@ -15,11 +15,14 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Inventory',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('id', models.BigAutoField(auto_created=True,
+                 primary_key=True, serialize=False, verbose_name='ID')),
                 ('quantiles', models.FloatField()),
-                ('created', models.DateTimeField(default=django.utils.timezone.now, editable=False)),
+                ('created', models.DateTimeField(
+                    default=django.utils.timezone.now, editable=False)),
                 ('ceeated_by', models.IntegerField(null=True)),
-                ('product_id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='IraqiStore.product')),
+                ('product_id', models.ForeignKey(
+                    on_delete=django.db.models.deletion.CASCADE, to='IraqiStore.product')),
             ],
         ),
     ]

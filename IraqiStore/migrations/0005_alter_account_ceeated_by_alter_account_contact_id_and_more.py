@@ -20,7 +20,8 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='account',
             name='contact_id',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.DO_NOTHING, to='IraqiStore.contact'),
+            field=models.ForeignKey(
+                blank=True, null=True, on_delete=django.db.models.deletion.DO_NOTHING, to='IraqiStore.contact'),
         ),
         migrations.AlterField(
             model_name='account',
@@ -100,7 +101,8 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='product',
             name='discount',
-            field=models.FloatField(blank=True, default=0, null=True, validators=[django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(100)]),
+            field=models.FloatField(blank=True, default=0, null=True, validators=[
+                                    django.core.validators.MinValueValidator(0), django.core.validators.MaxValueValidator(100)]),
         ),
         migrations.AlterField(
             model_name='product',
