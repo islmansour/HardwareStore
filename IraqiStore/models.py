@@ -19,6 +19,8 @@ class LOV(models.Model):
 
 
 class Product(models.Model):
+    product_number = models.CharField(max_length=15, blank=True, null=True)
+
     name = models.CharField(max_length=255)  # 1
     desc = models.TextField(blank=True, null=True)  # 2
     alias = models.CharField(max_length=255, blank=True, null=True)
@@ -58,6 +60,8 @@ class Contact(models.Model):
 
 
 class Account(models.Model):
+    AccountNumber = models.CharField(max_length=15, blank=True, null=True)
+
     name = models.CharField(max_length=255)
     contact_id = models.ForeignKey(
         Contact, on_delete=models.DO_NOTHING, blank=True, null=True)
@@ -81,6 +85,8 @@ class Quote(models.Model):
         Contact, on_delete=models.DO_NOTHING, blank=True, null=True)
     status = models.CharField(
         max_length=32, blank=True, null=True)
+    quote_number = models.CharField(max_length=15, blank=True, null=True)
+
     notes = models.TextField(blank=True, null=True)
     delivery = models.BooleanField(default=False)
     created = models.DateTimeField(default=now, editable=False)  # 5
@@ -104,6 +110,7 @@ class Order(models.Model):
         Contact, on_delete=models.DO_NOTHING, blank=True, null=True)
     status = models.CharField(
         max_length=32, blank=True, null=True)
+    Order_number = models.CharField(max_length=15, blank=True, null=True)
 
     street = models.CharField(max_length=255, blank=True, null=True)
     street2 = models.CharField(max_length=255, blank=True, null=True)
