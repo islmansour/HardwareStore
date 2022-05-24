@@ -1,14 +1,33 @@
+from datetime import datetime
 from email.quoprimime import quote
 from itertools import product
+from os import access
 from pydoc import describe
-#import numbers
-#from statistics import quantiles
+from xmlrpc.client import DateTime
+# import numbers
+# from statistics import quantiles
 from django.db import models
 from django.utils.timezone import now
 from django.core.validators import MaxValueValidator, MinValueValidator
-
+from django.db.models.functions import Substr, Length
 
 # Create your models here.
+
+
+def getuuid():
+    return str(200000+Order.objects.latest('id').id+1)
+
+
+def getProductUID():
+    return str(300000+Product.objects.latest('id').id+1)
+
+
+def getAccountUID():
+    return str(400000+Account.objects.latest('id').id+1)
+
+
+def getQuoteUID():
+    return str(500000+Quote.objects.latest('id').id+1)
 
 
 class LOV(models.Model):
@@ -19,7 +38,8 @@ class LOV(models.Model):
 
 
 class Product(models.Model):
-    product_number = models.CharField(max_length=15, blank=True, null=True)
+    product_number = models.CharField(
+        max_length=12, default=getProductUID, blank=True, null=True)
 
     name = models.CharField(max_length=255)  # 1
     desc = models.TextField(blank=True, null=True)  # 2
@@ -60,7 +80,8 @@ class Contact(models.Model):
 
 
 class Account(models.Model):
-    AccountNumber = models.CharField(max_length=15, blank=True, null=True)
+    account_number = models.CharField(
+        max_length=12, default=getAccountUID, blank=True, null=True)
 
     name = models.CharField(max_length=255)
     contact_id = models.ForeignKey(
@@ -85,7 +106,8 @@ class Quote(models.Model):
         Contact, on_delete=models.DO_NOTHING, blank=True, null=True)
     status = models.CharField(
         max_length=32, blank=True, null=True)
-    quote_number = models.CharField(max_length=15, blank=True, null=True)
+    quote_number = models.CharField(
+        max_length=12, default=getQuoteUID, blank=True, null=True)
 
     notes = models.TextField(blank=True, null=True)
     delivery = models.BooleanField(default=False)
@@ -110,7 +132,8 @@ class Order(models.Model):
         Contact, on_delete=models.DO_NOTHING, blank=True, null=True)
     status = models.CharField(
         max_length=32, blank=True, null=True)
-    Order_number = models.CharField(max_length=15, blank=True, null=True)
+    order_number = models.CharField(
+        max_length=12, default=getuuid, blank=True, null=True)
 
     street = models.CharField(max_length=255, blank=True, null=True)
     street2 = models.CharField(max_length=255, blank=True, null=True)

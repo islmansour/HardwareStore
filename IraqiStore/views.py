@@ -290,18 +290,19 @@ def get_single_order(request, pk):
 
 @api_view(['POST'])
 def upsert_order(request, pk):
-    logging.info('Here')
     try:
         record = Order.objects.get(id=pk)
         serializer = orderSerializer(instance=record, data=request.data)
         if serializer.is_valid():
             serializer.save()
+
     except Exception as e:
-        logging.debug(e)
         try:
             serializer = orderSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
+            logging.debug(serializer)
+
             for i in serializer.errors:
                 logging.info("Err: " + i)
         except Exception as e:
