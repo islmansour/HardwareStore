@@ -5,7 +5,7 @@ from IraqiStore.models import LOV, Account, Contact, Delivery, News, Order, Orde
 class lovSerializer(serializers.ModelSerializer):
     class Meta:
         model = LOV
-        fields = ('type', 'name', 'value')
+        fields = '__all__'
 
 
 class productSerializer(serializers.ModelSerializer):
@@ -38,16 +38,19 @@ class accountSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class orderSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Order
-        fields = '__all__'
-
-
 class orderItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderItem
         fields = '__all__'
+
+
+class orderSerializer(serializers.ModelSerializer):
+    orderItems = orderItemSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Order
+        fields = ['id', 'orderDate', 'accountId', 'contactId', 'status', 'order_number', 'street',
+                  'street2', 'town', 'wazeLink', 'notes', 'quoteId', 'delivery', 'created', 'created_by', 'orderItems']
 
 
 class quoteSerializer(serializers.ModelSerializer):

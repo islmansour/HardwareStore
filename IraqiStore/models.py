@@ -1,3 +1,4 @@
+from ast import Or
 from datetime import datetime
 from email.quoprimime import quote
 from itertools import product
@@ -30,11 +31,23 @@ def getQuoteUID():
     return str(500000+Quote.objects.latest('id').id+1)
 
 
+def getOrderUID():
+    return str(200000+Order.objects.latest('id').id+1)
+
+
 class LOV(models.Model):
     type = models.CharField(max_length=50, blank=True, null=True)
     name = models.CharField(max_length=50, blank=True, null=True)
     value = models.CharField(max_length=50, blank=True, null=True)
     active = models.BooleanField(default=True)
+    language = models.CharField(
+        default='he', max_length=2, blank=True, null=True)
+
+    class Meta:
+        unique_together = ('type', 'name', 'language')
+
+    def __str__(self) -> str:
+        return self.type+"|"+self.name+"|"+self.language
 
 
 class Product(models.Model):
@@ -55,6 +68,9 @@ class Product(models.Model):
     sub_category = models.CharField(max_length=50, blank=True, null=True)
     # need to add attributes
 
+    def __str__(self) -> str:
+        return self.name
+
 
 class Inventory(models.Model):
     product_id = models.ForeignKey(Product, on_delete=models.CASCADE)
@@ -63,7 +79,27 @@ class Inventory(models.Model):
     created_by = models.IntegerField(blank=True, null=True)  # 4
 
 
+class Account(models.Model):
+    account_number = models.CharField(
+        max_length=12, default=getAccountUID, blank=True, null=True)
+
+    name = models.CharField(max_length=255)
+
+    street = models.CharField(max_length=255, blank=True, null=True)
+    street2 = models.CharField(max_length=255, blank=True, null=True)
+    pobox = models.IntegerField(blank=True, null=True)
+    zip = models.IntegerField(blank=True, null=True)
+    town = models.CharField(max_length=50, blank=True, null=True)
+    email = models.EmailField(blank=True, null=True)
+    phone = models.CharField(max_length=10, blank=True, null=True)
+    active = models.BooleanField(default=True)
+    created = models.DateTimeField(default=now, editable=False)
+    created_by = models.IntegerField(blank=True, null=True)
+
+
 class Contact(models.Model):
+    accountId = models.ForeignKey(
+        Account, on_delete=models.DO_NOTHING, blank=True, null=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     phone = models.CharField(max_length=10, blank=True, null=True)
@@ -74,25 +110,6 @@ class Contact(models.Model):
     pobox = models.IntegerField(blank=True, null=True)
     zip = models.IntegerField(blank=True, null=True)
     town = models.CharField(max_length=50, blank=True, null=True)
-    active = models.BooleanField(default=True)
-    created = models.DateTimeField(default=now, editable=False)
-    created_by = models.IntegerField(blank=True, null=True)
-
-
-class Account(models.Model):
-    account_number = models.CharField(
-        max_length=12, default=getAccountUID, blank=True, null=True)
-
-    name = models.CharField(max_length=255)
-    contact_id = models.ForeignKey(
-        Contact, on_delete=models.DO_NOTHING, blank=True, null=True)
-    street = models.CharField(max_length=255, blank=True, null=True)
-    street2 = models.CharField(max_length=255, blank=True, null=True)
-    pobox = models.IntegerField(blank=True, null=True)
-    zip = models.IntegerField(blank=True, null=True)
-    town = models.CharField(max_length=50, blank=True, null=True)
-    email = models.EmailField(blank=True, null=True)
-    phone = models.CharField(max_length=10, blank=True, null=True)
     active = models.BooleanField(default=True)
     created = models.DateTimeField(default=now, editable=False)
     created_by = models.IntegerField(blank=True, null=True)
@@ -133,7 +150,7 @@ class Order(models.Model):
     status = models.CharField(
         max_length=32, blank=True, null=True)
     order_number = models.CharField(
-        max_length=12, default=getuuid, blank=True, null=True)
+        max_length=12, default=getOrderUID, blank=True, null=True)
 
     street = models.CharField(max_length=255, blank=True, null=True)
     street2 = models.CharField(max_length=255, blank=True, null=True)
@@ -148,7 +165,8 @@ class Order(models.Model):
 
 
 class OrderItem(models.Model):
-    orderId = models.ForeignKey(Order, on_delete=models.CASCADE)
+    orderId = models.ForeignKey(
+        Order, related_name='items', on_delete=models.CASCADE)
     productId = models.ForeignKey(Product, on_delete=models.DO_NOTHING)
     quantity = models.FloatField(blank=True, null=True)
     price = models.FloatField(blank=True, null=True)
