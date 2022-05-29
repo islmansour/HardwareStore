@@ -264,6 +264,7 @@ def upsert_quote_item(request, pk):
 def get_orders(request):
     orders = Order.objects.all()
     serializer = orderSerializer(orders, many=True)
+
     return Response(serializer.data)
 
 
@@ -300,16 +301,15 @@ def upsert_order(request, pk):
         try:
             serializer = orderSerializer(data=request.data)
             if serializer.is_valid():
-                serializer.save()
-            logging.debug(serializer)
-
+                record = serializer.save()
+                HttpResponse(str(record.id), status=201)
             for i in serializer.errors:
                 logging.info("Err: " + i)
         except Exception as e:
             logging.debug(e)
             return HttpResponse('Error while upserting an account.', status=400)
 
-    return HttpResponse('Account Created', status=201)
+    return HttpResponse(str(-1), status=201)
 
 
 @api_view(['GET'])
@@ -327,21 +327,40 @@ def get_order_item_by_order(request, orderId):
 
 
 @api_view(['POST'])
+def delete_order_item(request, pk):
+    try:
+        item = OrderItem.objects.get(pk=pk)
+        item.delete()
+    except:
+        return HttpResponse('Error while upserting an order item.')
+    return HttpResponse('success')
+
+
+@api_view(['POST'])
 def upsert_order_item(request, pk):
+    recordId = int(-1)
+
     try:
         record = OrderItem.objects.get(id=pk)
         serializer = orderItemSerializer(instance=record, data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            record = serializer.save()
+            recordId = record.id
     except:
+        print('adding new item')
+
         try:
             serializer = orderItemSerializer(data=request.data)
-            if serializer.is_valid():
-                serializer.save()
-        except:
-            return('Error while upserting an order item.')
 
-    return Response(serializer.data)
+            if serializer.is_valid():
+                record = serializer.save()
+                recordId = record.id
+            for i in serializer.errors:
+                logging.info("Err: " + i)
+        except:
+            HttpResponse('Error while upserting an order item.')
+
+    return HttpResponse(str(recordId), status=201)
 
 
 @api_view(['GET'])

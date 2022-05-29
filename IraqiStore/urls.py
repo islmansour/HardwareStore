@@ -40,5 +40,6 @@ urlpatterns = [
     path('upsert_order_item/<str:pk>', views.upsert_order_item),
     path('upsert_news/<str:pk>', views.upsert_news),
     path('upsert_delivery/<str:pk>', views.upsert_delivery),
+    path('delete_order_item/<str:pk>', views.delete_order_item)
 
 ]

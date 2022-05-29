@@ -12,8 +12,6 @@ from django.utils.timezone import now
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db.models.functions import Substr, Length
 
-# Create your models here.
-
 
 def getuuid():
     return str(200000+Order.objects.latest('id').id+1)
@@ -166,7 +164,7 @@ class Order(models.Model):
 
 class OrderItem(models.Model):
     orderId = models.ForeignKey(
-        Order, related_name='items', on_delete=models.CASCADE)
+        Order, related_name='orderItems', on_delete=models.CASCADE)
     productId = models.ForeignKey(Product, on_delete=models.DO_NOTHING)
     quantity = models.FloatField(blank=True, null=True)
     price = models.FloatField(blank=True, null=True)
