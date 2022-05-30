@@ -53,16 +53,19 @@ class orderSerializer(serializers.ModelSerializer):
                   'street2', 'town', 'wazeLink', 'notes', 'quoteId', 'delivery', 'created', 'created_by', 'orderItems']
 
 
-class quoteSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Quote
-        fields = '__all__'
-
-
 class quoteItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = QutoeItem
         fields = '__all__'
+
+
+class quoteSerializer(serializers.ModelSerializer):
+    quoteItems = quoteItemSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Quote
+        fields = ['id', 'quoteDate', 'accountId', 'contactId', 'status',
+                  'quote_number', 'delivery', 'notes', 'created', 'created_by', 'quoteItems']
 
 
 class newsSerializer(serializers.ModelSerializer):

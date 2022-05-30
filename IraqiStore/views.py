@@ -260,6 +260,16 @@ def upsert_quote_item(request, pk):
     return Response(serializer.data)
 
 
+@api_view(['POST'])
+def delete_quote_item(request, pk):
+    try:
+        item = QutoeItem.objects.get(pk=pk)
+        item.delete()
+    except:
+        return HttpResponse('Error while upserting an quote item.')
+    return HttpResponse('success')
+
+
 @api_view(['GET'])
 def get_orders(request):
     orders = Order.objects.all()

@@ -114,7 +114,6 @@ class Contact(models.Model):
 
 
 class Quote(models.Model):
-    _status = LOV.objects.filter(type='QUOTE_STATUS', active=True).all()
     quoteDate = models.DateField(default=now, blank=True, null=True)
     accountId = models.ForeignKey(Account, on_delete=models.DO_NOTHING)
     contactId = models.ForeignKey(
@@ -131,7 +130,8 @@ class Quote(models.Model):
 
 
 class QutoeItem(models.Model):
-    quoteId = models.ForeignKey(Quote, on_delete=models.CASCADE)
+    quoteId = models.ForeignKey(
+        Quote, related_name='quoteItems', on_delete=models.CASCADE)
     productId = models.ForeignKey(Product, on_delete=models.DO_NOTHING)
     quantity = models.FloatField(blank=True, null=True)
     price = models.FloatField(blank=True, null=True)
