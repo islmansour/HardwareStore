@@ -8,12 +8,12 @@ urlpatterns = [
     path('contact_list', views.get_contacts),
     path('account_list', views.get_accounts),
     path('quote_list', views.get_quotes),
-    path('quote_list_by_account/<accountId>', views.get_quotes_by_account),
+    path('quote_list_by_account/<str:accountId>', views.get_quotes_by_account),
     path('quote_list_by_contact/<contactId>', views.get_quotes_by_contact),
     path('quote_item_list', views.get_quote_item),
     path('quote_item_list_by_quote/<quoteId>', views.get_quote_item_by_quote),
     path('order_list', views.get_orders),
-    path('order_list_by_account/<accountId>', views.get_orders_by_account),
+    path('order_list_by_account/<str:accountId>', views.get_orders_by_account),
     path('order_list_by_contact/<contactId>', views.get_orders_by_contact),
     path('order_item_list/<orderId>', views.get_order_item_by_order),
     path('get_single_inventory/<str:pk>', views.get_single_inventory),
@@ -41,7 +41,8 @@ urlpatterns = [
     path('upsert_news/<str:pk>', views.upsert_news),
     path('upsert_delivery/<str:pk>', views.upsert_delivery),
     path('delete_order_item/<str:pk>', views.delete_order_item),
-    path('delete_quote_item/<str:pk>', views.delete_quote_item)
+    path('delete_quote_item/<str:pk>', views.delete_quote_item),
+    path('get_account_contacts/<str:pk>', views.get_account_contacts)
 
 
 ]

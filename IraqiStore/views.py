@@ -171,6 +171,14 @@ def upsert_account(request, pk):
 
 
 @api_view(['GET'])
+def get_account_contacts(request, pk):
+    contacts = Contact.objects.filter(accountId=int(pk))
+    serializer = contactSerializer(contacts, many=True)
+
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
 def get_quotes(request):
     quotes = Quote.objects.all()
     serializer = quoteSerializer(quotes, many=True)

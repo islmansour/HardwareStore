@@ -77,29 +77,10 @@ class Inventory(models.Model):
     created_by = models.IntegerField(blank=True, null=True)  # 4
 
 
-class Account(models.Model):
-    account_number = models.CharField(
-        max_length=12, default=getAccountUID, blank=True, null=True)
-
-    name = models.CharField(max_length=255)
-
-    street = models.CharField(max_length=255, blank=True, null=True)
-    street2 = models.CharField(max_length=255, blank=True, null=True)
-    pobox = models.IntegerField(blank=True, null=True)
-    zip = models.IntegerField(blank=True, null=True)
-    town = models.CharField(max_length=50, blank=True, null=True)
-    email = models.EmailField(blank=True, null=True)
-    phone = models.CharField(max_length=10, blank=True, null=True)
-    active = models.BooleanField(default=True)
-    created = models.DateTimeField(default=now, editable=False)
-    created_by = models.IntegerField(blank=True, null=True)
-
-
 class Contact(models.Model):
-    accountId = models.ForeignKey(
-        Account, on_delete=models.DO_NOTHING, blank=True, null=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
+    accountId = models.IntegerField(blank=True, null=True)
     phone = models.CharField(max_length=10, blank=True, null=True)
     phone2 = models.CharField(max_length=10, blank=True, null=True)
     email = models.EmailField(blank=True, null=True)
@@ -108,6 +89,25 @@ class Contact(models.Model):
     pobox = models.IntegerField(blank=True, null=True)
     zip = models.IntegerField(blank=True, null=True)
     town = models.CharField(max_length=50, blank=True, null=True)
+    active = models.BooleanField(default=True)
+    created = models.DateTimeField(default=now, editable=False)
+    created_by = models.IntegerField(blank=True, null=True)
+
+
+class Account(models.Model):
+    account_number = models.CharField(
+        max_length=12, default=getAccountUID, blank=True, null=True)
+
+    name = models.CharField(max_length=255)
+    contactId = models.ForeignKey(
+        Contact, on_delete=models.CASCADE, blank=True, null=True)
+    street = models.CharField(max_length=255, blank=True, null=True)
+    street2 = models.CharField(max_length=255, blank=True, null=True)
+    pobox = models.IntegerField(blank=True, null=True)
+    zip = models.IntegerField(blank=True, null=True)
+    town = models.CharField(max_length=50, blank=True, null=True)
+    email = models.EmailField(blank=True, null=True)
+    phone = models.CharField(max_length=10, blank=True, null=True)
     active = models.BooleanField(default=True)
     created = models.DateTimeField(default=now, editable=False)
     created_by = models.IntegerField(blank=True, null=True)
