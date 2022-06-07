@@ -54,7 +54,7 @@ def upsert_product(request, pk):
         except Exception as e:
             logging.info(e)
             HttpResponse("Unable to upsert a product.", status=400)
-    return HttpResponse("Succeeded to upsert a product.", status=201)
+    return HttpResponse("Succeeded to upsert a product.")
 
 
 @api_view(['GET'])
@@ -167,7 +167,7 @@ def upsert_account(request, pk):
         except Exception as e:
             logging.debug(e)
             return HttpResponse('Error while upserting an account.', status=400)
-    return HttpResponse('Account Created', status=201)
+    return HttpResponse('Account Created')
 
 
 @api_view(['GET'])
@@ -208,21 +208,27 @@ def get_single_quote(request, pk):
 
 @api_view(['POST'])
 def upsert_quote(request, pk):
+    recordId = int(-1)
+
     try:
         record = Quote.objects.get(id=pk)
         serializer = quoteSerializer(instance=record, data=request.data)
         if serializer.is_valid():
             serializer.save()
+            recordId = record.id
+
     except Exception as e:
         try:
             serializer = quoteSerializer(data=request.data)
             if serializer.is_valid():
                 serializer.save()
+                recordId = record.id
+
         except Exception as e:
             logging.debug(e)
-            HttpResponse('Error while upserting an quote.', status=400)
+            HttpResponse('-1')
 
-    return HttpResponse("Quote Created.", status=201)
+    return HttpResponse(str(recordId))
 
 
 @api_view(['GET'])
@@ -259,7 +265,7 @@ def upsert_quote_item(request, pk):
         except:
             HttpResponse('Error while upserting an order item.')
 
-    return HttpResponse(str(recordId), status=201)
+    return HttpResponse(str(recordId))
 
 
 @api_view(['POST'])
@@ -303,6 +309,7 @@ def get_single_order(request, pk):
 
 @api_view(['POST'])
 def upsert_order(request, pk):
+    print(request)
     try:
         record = Order.objects.get(id=pk)
         serializer = orderSerializer(instance=record, data=request.data)
@@ -314,13 +321,13 @@ def upsert_order(request, pk):
             serializer = orderSerializer(data=request.data)
             if serializer.is_valid():
                 record = serializer.save()
-                HttpResponse(str(record.id), status=201)
+                HttpResponse(str(record.id), status=200)
 
         except Exception as e:
             logging.debug(e)
             return HttpResponse('Error while upserting an account.', status=400)
 
-    return HttpResponse(str(-1), status=201)
+    return HttpResponse(str(-1))
 
 
 @api_view(['GET'])
@@ -358,8 +365,6 @@ def upsert_order_item(request, pk):
             record = serializer.save()
             recordId = record.id
     except:
-        print('adding new item')
-
         try:
             serializer = orderItemSerializer(data=request.data)
 
@@ -368,9 +373,9 @@ def upsert_order_item(request, pk):
                 recordId = record.id
 
         except:
-            HttpResponse('Error while upserting an order item.')
+            HttpResponse('-1')
 
-    return HttpResponse(str(recordId), status=201)
+    return HttpResponse(str(recordId))
 
 
 @api_view(['GET'])

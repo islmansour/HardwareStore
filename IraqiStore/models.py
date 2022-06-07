@@ -136,12 +136,15 @@ class QutoeItem(models.Model):
     quantity = models.FloatField(blank=True, null=True)
     price = models.FloatField(blank=True, null=True)
     notes = models.TextField(blank=True, null=True)
+    discount = models.FloatField(blank=True, null=True)
+
     created = models.DateTimeField(default=now, editable=False)  # 5
     created_by = models.IntegerField(blank=True, null=True)  # 4
 
 
 class Order(models.Model):
     orderDate = models.DateField(default=now, blank=True, null=True)
+
     accountId = models.ForeignKey(Account, on_delete=models.DO_NOTHING)
     contactId = models.ForeignKey(
         Contact, on_delete=models.DO_NOTHING, blank=True, null=True)
@@ -167,6 +170,8 @@ class OrderItem(models.Model):
         Order, related_name='orderItems', on_delete=models.CASCADE)
     productId = models.ForeignKey(Product, on_delete=models.DO_NOTHING)
     quantity = models.FloatField(blank=True, null=True)
+    discount = models.FloatField(blank=True, null=True)
+
     price = models.FloatField(blank=True, null=True)
     notes = models.TextField(blank=True, null=True)
     quoteItemId = models.ForeignKey(
