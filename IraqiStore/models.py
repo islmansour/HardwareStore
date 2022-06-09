@@ -203,12 +203,25 @@ class Delivery(models.Model):
 
 class User(models.Model):
     uid = models.CharField(max_length=256, blank=True, null=True)
-    first_name = models.CharField(max_length=50, blank=True, null=True)
-    last_name = models.CharField(max_length=50, blank=True, null=True)
-    login = models.CharField(max_length=50, blank=True, null=True)
+    token = models.TextField(blank=True, null=True)
+    contactId = models.IntegerField(blank=True, null=True)
     active = models.BooleanField(default=True)
     created = models.DateTimeField(default=now, editable=False)  # 5
     created_by = models.IntegerField(blank=True, null=True)
 
-    def __str__(self) -> str:
-        return self.first_name
+
+class Notification(models.Model):
+    message = models.CharField(max_length=256, blank=True, null=True)
+    created = models.DateTimeField(default=now, editable=False)
+    sent = models.BooleanField(default=True)
+    target = models.IntegerField(blank=True, null=True)
+    action = models.IntegerField(blank=True, null=True)
+
+
+class NotificationRecipient(models.Model):
+    messageId = models.ForeignKey(
+        Notification, on_delete=models.CASCADE, related_name='notificationRecipients', blank=True, null=True)
+    recipientId = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='notificationRecipients', blank=True, null=True)
+    seen = models.DateTimeField(blank=True, null=True)
+    created = models.DateTimeField(default=now, editable=False)

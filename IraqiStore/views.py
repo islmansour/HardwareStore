@@ -26,6 +26,71 @@ def get_lovs(request):
 
 
 @api_view(['GET'])
+def get_users(request):
+    users = User.objects.all()
+    serializer = userSerializer(users, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def get_user_by_uid(request, pk):
+    try:
+
+        user = User.objects.filter(uid=pk)
+
+        serializer = userSerializer(user, many=True)
+        logging.debug(serializer.data
+
+
+                      )
+
+        return Response(serializer.data)
+
+    except Exception as e:
+        logging.debug(e)
+
+    return HttpResponse('error getting user', status=500)
+
+
+@api_view(['GET'])
+def get_single_user(request, pk):
+    try:
+
+        user = User.objects.filter(id=int(pk))
+
+        serializer = userSerializer(user, many=True)
+
+        return Response(serializer.data)
+
+    except Exception as e:
+        logging.debug(e)
+
+    return HttpResponse('error getting user', status=500)
+
+
+@api_view(['POST'])
+def upsert_user(request, pk):
+    recordId = int(-1)
+    try:
+        record = User.objects.get(id=pk)
+        serializer = userSerializer(instance=record, data=request.data)
+        if serializer.is_valid():
+            record = serializer.save()
+            recordId = record.id
+    except:
+        print('new user')
+        try:
+            serializer = userSerializer(data=request.data)
+            if serializer.is_valid():
+                record = serializer.save()
+                recordId = record.id
+        except:
+            HttpResponse('Error while upserting a contact.')
+
+    return HttpResponse(str(recordId))
+
+
+@api_view(['GET'])
 def get_products(request):
     products = Product.objects.all()
     serializer = productSerializer(products, many=True)
@@ -71,22 +136,6 @@ def get_single_inventory(request, pk):
     return Response(serializer.data)
 
 
-@api_view(['GET'])
-def get_user_by_uid(request, pk):
-    try:
-
-        user = User.objects.filter(uid=pk)
-
-        serializer = userSerializer(user, many=True)
-
-        return Response(serializer.data)
-
-    except Exception as e:
-        logging.debug(e)
-
-    return HttpResponse('error getting user', status=500)
-
-
 @api_view(['POST'])
 def upsert_inventory(request, pk):
     try:
@@ -114,32 +163,35 @@ def get_contacts(request):
 
 @api_view(['GET'])
 def get_single_contact(request, pk):
-    contacts = Contact.objects.get(id=pk)
-    serializer = contactSerializer(contacts, many=False)
+    contacts = Contact.objects.filter(id=int(pk))
+    serializer = contactSerializer(contacts, many=True)
     return Response(serializer.data)
 
 
 @api_view(['POST'])
 def upsert_contact(request, pk):
+    recordId = int(-1)
     try:
         record = Contact.objects.get(id=pk)
         serializer = contactSerializer(instance=record, data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            record = serializer.save()
+            recordId = record.id
     except:
         try:
             serializer = contactSerializer(data=request.data)
             if serializer.is_valid():
-                serializer.save()
+                record = serializer.save()
+                recordId = record.id
         except:
-            return('Error while upserting a contact.')
+            HttpResponse('Error while upserting a contact.')
 
-    return Response(serializer.data)
+    return HttpResponse(str(recordId))
 
 
 @api_view(['GET'])
 def get_accounts(request):
-    accounts = Account.objects.all()
+    accounts = Account.objects.all().order_by('name')
     serializer = accountSerializer(accounts, many=True)
     return Response(serializer.data)
 
@@ -153,21 +205,24 @@ def get_single_account(request, pk):
 
 @api_view(['POST'])
 def upsert_account(request, pk):
+    recordId = int(-1)
+
     try:
         record = Account.objects.get(id=pk)
         serializer = accountSerializer(instance=record, data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            record = serializer.save()
+            recordId = record.id
     except Exception as e:
         try:
             serializer = accountSerializer(data=request.data)
             if serializer.is_valid():
-                serializer.save()
+                record = serializer.save()
+                recordId = record.id
 
         except Exception as e:
-            logging.debug(e)
             return HttpResponse('Error while upserting an account.', status=400)
-    return HttpResponse('Account Created')
+    return HttpResponse(str(recordId))
 
 
 @api_view(['GET'])
@@ -214,14 +269,14 @@ def upsert_quote(request, pk):
         record = Quote.objects.get(id=pk)
         serializer = quoteSerializer(instance=record, data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            record = serializer.save()
             recordId = record.id
 
     except Exception as e:
         try:
             serializer = quoteSerializer(data=request.data)
             if serializer.is_valid():
-                serializer.save()
+                record = serializer.save()
                 recordId = record.id
 
         except Exception as e:
@@ -314,20 +369,21 @@ def upsert_order(request, pk):
         record = Order.objects.get(id=pk)
         serializer = orderSerializer(instance=record, data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            record = serializer.save()
+            recordId = record.id
 
     except Exception as e:
         try:
             serializer = orderSerializer(data=request.data)
             if serializer.is_valid():
                 record = serializer.save()
-                HttpResponse(str(record.id), status=200)
+                recordId = record.id
 
         except Exception as e:
             logging.debug(e)
             return HttpResponse('Error while upserting an account.', status=400)
 
-    return HttpResponse(str(-1))
+    return HttpResponse(str(recordId))
 
 
 @api_view(['GET'])
