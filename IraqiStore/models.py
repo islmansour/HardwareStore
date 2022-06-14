@@ -33,6 +33,15 @@ def getOrderUID():
     return str(200000+Order.objects.latest('id').id+1)
 
 
+class LegalDocument(models.Model):
+    active = models.BooleanField(default=True)
+    contactId = models.IntegerField(blank=True, null=True)
+    accountId = models.IntegerField(blank=True, null=True)
+    documentName = models.TextField(blank=True, null=True)
+    active = models.BooleanField(default=True)
+    created = models.DateTimeField(default=now, editable=False)  # 4
+
+
 class LOV(models.Model):
     type = models.CharField(max_length=50, blank=True, null=True)
     name = models.CharField(max_length=50, blank=True, null=True)
@@ -224,4 +233,19 @@ class NotificationRecipient(models.Model):
     recipientId = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='notificationRecipients', blank=True, null=True)
     seen = models.DateTimeField(blank=True, null=True)
+    created = models.DateTimeField(default=now, editable=False)
+
+
+class File(models.Model):
+    file = models.FileField(blank=False, null=False)
+    remark = models.CharField(max_length=20)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+
+class AccountContacts(models.Model):
+    accountId = models.ForeignKey(
+        Account, related_name='accountContact', on_delete=models.CASCADE)
+    contactId = models.ForeignKey(
+        Contact, related_name='contactAccount', on_delete=models.CASCADE)
+    active = models.BooleanField(default=True)
     created = models.DateTimeField(default=now, editable=False)

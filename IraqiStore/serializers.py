@@ -1,5 +1,12 @@
 from rest_framework import serializers
-from IraqiStore.models import LOV, Account, Contact, Delivery, News, Order, OrderItem, Product, Inventory, Quote, QutoeItem, User
+from IraqiStore.models import AccountContacts, File, LOV, Account, Contact, Delivery, LegalDocument, News, Order, OrderItem, Product, Inventory, Quote, QutoeItem, User
+
+
+# Serializers define the API representation.
+
+
+class FileSerializer(serializers.Serializer):
+    file = serializers.FileField(max_length=None, allow_empty_file=False)
 
 
 class lovSerializer(serializers.ModelSerializer):
@@ -29,6 +36,12 @@ class inventorySerializer(serializers.ModelSerializer):
 class contactSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contact
+        fields = '__all__'
+
+
+class legalDocSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LegalDocument
         fields = '__all__'
 
 
@@ -77,4 +90,10 @@ class newsSerializer(serializers.ModelSerializer):
 class deliverySerializer(serializers.ModelSerializer):
     class Meta:
         model = Delivery
+        fields = '__all__'
+
+
+class AccountContactSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AccountContacts
         fields = '__all__'

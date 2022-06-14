@@ -1,5 +1,9 @@
-from django.urls import path
+from rest_framework import routers
 from . import views
+from django.urls import include, path
+
+router = routers.DefaultRouter()
+router.register(r'file', views.FileUploadViewSet, basename='file')
 
 urlpatterns = [
     path('lov', views.get_lovs),
@@ -45,7 +49,11 @@ urlpatterns = [
     path('upsert_delivery/<str:pk>', views.upsert_delivery),
     path('delete_order_item/<str:pk>', views.delete_order_item),
     path('delete_quote_item/<str:pk>', views.delete_quote_item),
-    path('get_account_contacts/<str:pk>', views.get_account_contacts)
-
+    path('get_account_contacts/<str:pk>', views.get_account_contacts),
+    path('get_legal_docs_by_account/<str:pk>', views.get_legal_doc_by_account),
+    path('get_legal_docs_by_contact/<str:pk>', views.get_legal_doc_by_contact),
+    path('upsert_legal_document/<str:pk>', views.upsert_legal_document),
+    path('upsert_account_contact/<str:pk>', views.upsert_account_contact),
+    path('upload/', include(router.urls)),
 
 ]

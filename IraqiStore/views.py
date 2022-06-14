@@ -1,11 +1,37 @@
 import logging
+import io
+import json
+
 from django.shortcuts import render
 from django.http import HttpResponse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from IraqiStore.models import LOV, Account, Contact, Delivery, Inventory, News, Order, OrderItem, Product, Quote, QutoeItem, User
-from .serializers import accountSerializer, contactSerializer, deliverySerializer, inventorySerializer, lovSerializer, newsSerializer, orderItemSerializer, orderSerializer, productSerializer, quoteItemSerializer, quoteSerializer, userSerializer
-import json
+from IraqiStore.models import LOV, Account, AccountContacts, Contact, Delivery, Inventory, LegalDocument, News, Order, OrderItem, Product, Quote, QutoeItem, User
+from .serializers import AccountContactSerializer, FileSerializer, accountSerializer, contactSerializer, deliverySerializer, inventorySerializer, legalDocSerializer, lovSerializer, newsSerializer, orderItemSerializer, orderSerializer, productSerializer, quoteItemSerializer, quoteSerializer, userSerializer
+
+
+from rest_framework import viewsets
+from rest_framework import status
+from rest_framework.response import Response
+
+
+class FileUploadViewSet(viewsets.ViewSet):
+
+    def create(self, request):
+
+        serializer_class = FileSerializer(data=request.data)
+        if 'file' not in request.FILES or not serializer_class.is_valid():
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        else:
+            handle_uploaded_file(request.FILES['file'])
+            return Response(status=status.HTTP_201_CREATED)
+
+
+def handle_uploaded_file(f):
+    with open('./pdfs/'+f.name, 'wb+') as destination:
+        for chunk in f.chunks():
+            destination.write(chunk)
+
 
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(levelname)s %(message)s',
@@ -18,31 +44,41 @@ def iraqi_view(request):
 # Create your views here.
 
 
-@api_view(['GET'])
+@ api_view(['GET'])
 def get_lovs(request):
     lov = LOV.objects.all()
     serializer = lovSerializer(lov, many=True)
     return Response(serializer.data)
 
 
-@api_view(['GET'])
+@ api_view(['GET'])
+def get_legal_doc_by_account(request, pk):
+    legals = LegalDocument.objects.filter(accountId=int(pk))
+    serializer = legalDocSerializer(legals, many=True)
+    return Response(serializer.data)
+
+
+@ api_view(['GET'])
+def get_legal_doc_by_contact(request, pk):
+    legals = LegalDocument.objects.filter(contactId=int(pk))
+    serializer = legalDocSerializer(legals, many=True)
+    return Response(serializer.data)
+
+
+@ api_view(['GET'])
 def get_users(request):
     users = User.objects.all()
     serializer = userSerializer(users, many=True)
     return Response(serializer.data)
 
 
-@api_view(['GET'])
+@ api_view(['GET'])
 def get_user_by_uid(request, pk):
     try:
 
         user = User.objects.filter(uid=pk)
 
         serializer = userSerializer(user, many=True)
-        logging.debug(serializer.data
-
-
-                      )
 
         return Response(serializer.data)
 
@@ -52,14 +88,11 @@ def get_user_by_uid(request, pk):
     return HttpResponse('error getting user', status=500)
 
 
-@api_view(['GET'])
+@ api_view(['GET'])
 def get_single_user(request, pk):
     try:
-
         user = User.objects.filter(id=int(pk))
-
         serializer = userSerializer(user, many=True)
-
         return Response(serializer.data)
 
     except Exception as e:
@@ -68,7 +101,7 @@ def get_single_user(request, pk):
     return HttpResponse('error getting user', status=500)
 
 
-@api_view(['POST'])
+@ api_view(['POST'])
 def upsert_user(request, pk):
     recordId = int(-1)
     try:
@@ -90,21 +123,21 @@ def upsert_user(request, pk):
     return HttpResponse(str(recordId))
 
 
-@api_view(['GET'])
+@ api_view(['GET'])
 def get_products(request):
     products = Product.objects.all()
     serializer = productSerializer(products, many=True)
     return Response(serializer.data)
 
 
-@api_view(['GET'])
+@ api_view(['GET'])
 def get_single_product(request, pk):
     products = Product.objects.get(id=pk)
     serializer = productSerializer(products, many=False)
     return Response(serializer.data)
 
 
-@api_view(['POST'])
+@ api_view(['POST'])
 def upsert_product(request, pk):
     try:
         record = Product.objects.get(id=int(pk))
@@ -117,26 +150,25 @@ def upsert_product(request, pk):
             if serializer.is_valid():
                 serializer.save()
         except Exception as e:
-            logging.info(e)
             HttpResponse("Unable to upsert a product.", status=400)
     return HttpResponse("Succeeded to upsert a product.")
 
 
-@api_view(['GET'])
+@ api_view(['GET'])
 def get_inventory(request):
     inventory = Inventory.objects.all()
     serializer = inventorySerializer(inventory, many=True)
     return Response(serializer.data)
 
 
-@api_view(['GET'])
+@ api_view(['GET'])
 def get_single_inventory(request, pk):
     inventory = Inventory.objects.get(id=pk)
     serializer = inventorySerializer(inventory, many=False)
     return Response(serializer.data)
 
 
-@api_view(['POST'])
+@ api_view(['POST'])
 def upsert_inventory(request, pk):
     try:
         record = Inventory.objects.get(id=pk)
@@ -154,21 +186,21 @@ def upsert_inventory(request, pk):
     return Response(serializer.data)
 
 
-@api_view(['GET'])
+@ api_view(['GET'])
 def get_contacts(request):
     contacts = Contact.objects.all()
     serializer = contactSerializer(contacts, many=True)
     return Response(serializer.data)
 
 
-@api_view(['GET'])
+@ api_view(['GET'])
 def get_single_contact(request, pk):
     contacts = Contact.objects.filter(id=int(pk))
     serializer = contactSerializer(contacts, many=True)
     return Response(serializer.data)
 
 
-@api_view(['POST'])
+@ api_view(['POST'])
 def upsert_contact(request, pk):
     recordId = int(-1)
     try:
@@ -189,21 +221,21 @@ def upsert_contact(request, pk):
     return HttpResponse(str(recordId))
 
 
-@api_view(['GET'])
+@ api_view(['GET'])
 def get_accounts(request):
     accounts = Account.objects.all().order_by('name')
     serializer = accountSerializer(accounts, many=True)
     return Response(serializer.data)
 
 
-@api_view(['GET'])
+@ api_view(['GET'])
 def get_single_account(request, pk):
     accounts = Account.objects.all(id=pk)
     serializer = accountSerializer(accounts, many=False)
     return Response(serializer.data)
 
 
-@api_view(['POST'])
+@ api_view(['POST'])
 def upsert_account(request, pk):
     recordId = int(-1)
 
@@ -213,55 +245,91 @@ def upsert_account(request, pk):
         if serializer.is_valid():
             record = serializer.save()
             recordId = record.id
+
     except Exception as e:
         try:
             serializer = accountSerializer(data=request.data)
             if serializer.is_valid():
                 record = serializer.save()
                 recordId = record.id
-
         except Exception as e:
             return HttpResponse('Error while upserting an account.', status=400)
     return HttpResponse(str(recordId))
 
 
-@api_view(['GET'])
+@ api_view(['GET'])
 def get_account_contacts(request, pk):
-    contacts = Contact.objects.filter(accountId=int(pk))
-    serializer = contactSerializer(contacts, many=True)
+    results = list(AccountContacts.objects.filter(
+        accountId=int(pk)).values_list('contactId', flat=True))
+    relatedContacts = Contact.objects.filter(id__in=results)
+    serializer = contactSerializer(relatedContacts, many=True)
 
     return Response(serializer.data)
 
 
-@api_view(['GET'])
+@ api_view(['GET'])
+def get_contact_accounts(request, pk):
+    results = list(AccountContacts.objects.all(
+    ).values_list('accountId', flat=True))
+    relatedContacts = Contact.objects.filter(id__in=results)
+    serializer = accountSerializer(relatedContacts, many=True)
+
+    return Response(serializer.data)
+
+
+@ api_view(['POST'])
+def upsert_account_contact(request, pk):
+    recordId = int(-1)
+    try:
+        record = AccountContacts.objects.get(id=pk)
+        serializer = AccountContactSerializer(
+            instance=record, data=request.data)
+        if serializer.is_valid():
+            record = serializer.save()
+            recordId = record.id
+            print(serializer.data)
+
+    except Exception as e:
+        try:
+            serializer = AccountContactSerializer(data=request.data)
+            if serializer.is_valid():
+                record = serializer.save()
+                recordId = record.id
+
+        except Exception as e:
+            return HttpResponse('Error while upserting an AccountContactSerializer.', status=400)
+    return HttpResponse(str(recordId))
+
+
+@ api_view(['GET'])
 def get_quotes(request):
     quotes = Quote.objects.all()
     serializer = quoteSerializer(quotes, many=True)
     return Response(serializer.data)
 
 
-@api_view(['GET'])
+@ api_view(['GET'])
 def get_quotes_by_account(request, accountId):
     quotes = Quote.objects.filter(accountId=int(accountId))
     serializer = quoteSerializer(quotes, many=True)
     return Response(serializer.data)
 
 
-@api_view(['GET'])
+@ api_view(['GET'])
 def get_quotes_by_contact(request, contactId):
     quotes = Quote.objects.filter(contactId=int(contactId))
     serializer = quoteSerializer(quotes, many=True)
     return Response(serializer.data)
 
 
-@api_view(['GET'])
+@ api_view(['GET'])
 def get_single_quote(request, pk):
     quotes = Quote.objects.get(id=pk)
     serializer = quoteSerializer(quotes, many=False)
     return Response(serializer.data)
 
 
-@api_view(['POST'])
+@ api_view(['POST'])
 def upsert_quote(request, pk):
     recordId = int(-1)
 
@@ -286,21 +354,21 @@ def upsert_quote(request, pk):
     return HttpResponse(str(recordId))
 
 
-@api_view(['GET'])
+@ api_view(['GET'])
 def get_quote_item(request):
     items = QutoeItem.objects.all()
     serializer = quoteItemSerializer(items, many=True)
     return Response(serializer.data)
 
 
-@api_view(['GET'])
+@ api_view(['GET'])
 def get_quote_item_by_quote(request, quoteId):
     items = QutoeItem.objects.filter(quoteId=int(quoteId))
     serializer = quoteItemSerializer(items, many=True)
     return Response(serializer.data)
 
 
-@api_view(['POST'])
+@ api_view(['POST'])
 def upsert_quote_item(request, pk):
     recordId = int(-1)
 
@@ -323,7 +391,7 @@ def upsert_quote_item(request, pk):
     return HttpResponse(str(recordId))
 
 
-@api_view(['POST'])
+@ api_view(['POST'])
 def delete_quote_item(request, pk):
     try:
         item = QutoeItem.objects.get(pk=pk)
@@ -333,7 +401,7 @@ def delete_quote_item(request, pk):
     return HttpResponse('success')
 
 
-@api_view(['GET'])
+@ api_view(['GET'])
 def get_orders(request):
     orders = Order.objects.all()
     serializer = orderSerializer(orders, many=True)
@@ -341,28 +409,28 @@ def get_orders(request):
     return Response(serializer.data)
 
 
-@api_view(['GET'])
+@ api_view(['GET'])
 def get_orders_by_account(request, accountId):
     orders = Order.objects.filter(accountId=int(accountId))
     serializer = orderSerializer(orders, many=True)
     return Response(serializer.data)
 
 
-@api_view(['GET'])
+@ api_view(['GET'])
 def get_orders_by_contact(request, contactId):
     orders = Order.objects.filter(contactId=int(contactId))
     serializer = orderSerializer(orders, many=True)
     return Response(serializer.data)
 
 
-@api_view(['GET'])
+@ api_view(['GET'])
 def get_single_order(request, pk):
     orders = Order.objects.get(id=pk)
     serializer = orderSerializer(orders, many=False)
     return Response(serializer.data)
 
 
-@api_view(['POST'])
+@ api_view(['POST'])
 def upsert_order(request, pk):
     print(request)
     try:
@@ -386,21 +454,21 @@ def upsert_order(request, pk):
     return HttpResponse(str(recordId))
 
 
-@api_view(['GET'])
+@ api_view(['GET'])
 def get_order_item(request):
     items = OrderItem.objects.all()
     serializer = orderItemSerializer(items, many=True)
     return Response(serializer.data)
 
 
-@api_view(['GET'])
+@ api_view(['GET'])
 def get_order_item_by_order(request, orderId):
     items = OrderItem.objects.filter(orderId=int(orderId))
     serializer = orderItemSerializer(items, many=True)
     return Response(serializer.data)
 
 
-@api_view(['POST'])
+@ api_view(['POST'])
 def delete_order_item(request, pk):
     try:
         item = OrderItem.objects.get(pk=pk)
@@ -410,7 +478,7 @@ def delete_order_item(request, pk):
     return HttpResponse('success')
 
 
-@api_view(['POST'])
+@ api_view(['POST'])
 def upsert_order_item(request, pk):
     recordId = int(-1)
 
@@ -434,21 +502,21 @@ def upsert_order_item(request, pk):
     return HttpResponse(str(recordId))
 
 
-@api_view(['GET'])
+@ api_view(['GET'])
 def get_news(request):
     news = News.objects.all()
     serializer = newsSerializer(news, many=True)
     return Response(serializer.data)
 
 
-@api_view(['GET'])
+@ api_view(['GET'])
 def get_single_news(request, pk):
     news = News.objects.get(id=pk)
     serializer = newsSerializer(news, many=False)
     return Response(serializer.data)
 
 
-@api_view(['POST'])
+@ api_view(['POST'])
 def upsert_news(request, pk):
     try:
         record = News.objects.get(id=pk)
@@ -466,35 +534,35 @@ def upsert_news(request, pk):
     return Response(serializer.data)
 
 
-@api_view(['GET'])
+@ api_view(['GET'])
 def get_deliverys(request):
     deliverys = Delivery.objects.all()
     serializer = deliverySerializer(deliverys, many=True)
     return Response(serializer.data)
 
 
-@api_view(['GET'])
+@ api_view(['GET'])
 def get_deliverys_by_account(request, accountId):
     deliverys = Delivery.objects.filter(accountId=int(accountId))
     serializer = deliverySerializer(deliverys, many=True)
     return Response(serializer.data)
 
 
-@api_view(['GET'])
+@ api_view(['GET'])
 def get_deliverys_by_contact(request, contactId):
     deliverys = Delivery.objects.filter(contactId=int(contactId))
     serializer = deliverySerializer(deliverys, many=True)
     return Response(serializer.data)
 
 
-@api_view(['GET'])
+@ api_view(['GET'])
 def get_single_delivery(request, pk):
     news = Delivery.objects.get(id=pk)
     serializer = deliverySerializer(news, many=False)
     return Response(serializer.data)
 
 
-@api_view(['POST'])
+@ api_view(['POST'])
 def upsert_delivery(request, pk):
     try:
         record = Delivery.objects.get(id=pk)
@@ -510,3 +578,26 @@ def upsert_delivery(request, pk):
             return('Error while upserting a Delivery.')
 
     return Response(serializer.data)
+
+
+@ api_view(['POST'])
+def upsert_legal_document(request, pk):
+    recordId = int(-1)
+
+    try:
+        record = LegalDocument.objects.get(id=pk)
+        serializer = legalDocSerializer(instance=record, data=request.data)
+        if serializer.is_valid():
+            record = serializer.save()
+            recordId = record.id
+    except:
+        try:
+            serializer = legalDocSerializer(data=request.data)
+            if serializer.is_valid():
+                record = serializer.save()
+                recordId = record.id
+
+        except:
+            HttpResponse('Error while upserting an order item.')
+
+    return HttpResponse(str(recordId))
