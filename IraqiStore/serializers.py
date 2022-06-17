@@ -63,7 +63,7 @@ class orderSerializer(serializers.ModelSerializer):
     class Meta:
         model = Order
         fields = ['id', 'orderDate', 'accountId', 'contactId', 'status', 'order_number', 'street',
-                  'street2', 'town', 'wazeLink', 'notes', 'quoteId', 'delivery', 'created', 'created_by', 'orderItems']
+                  'street2', 'town', 'wazeLink', 'notes', 'quoteId', 'deliveryId', 'created', 'created_by', 'orderItems']
 
 
 class quoteItemSerializer(serializers.ModelSerializer):

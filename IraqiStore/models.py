@@ -106,7 +106,7 @@ class Contact(models.Model):
 class Account(models.Model):
     account_number = models.CharField(
         max_length=12, default=getAccountUID, blank=True, null=True)
-
+    type = models.CharField(max_length=10, blank=True, null=True)
     name = models.CharField(max_length=255)
     contactId = models.ForeignKey(
         Contact, on_delete=models.CASCADE, blank=True, null=True)
@@ -120,6 +120,20 @@ class Account(models.Model):
     active = models.BooleanField(default=True)
     created = models.DateTimeField(default=now, editable=False)
     created_by = models.IntegerField(blank=True, null=True)
+
+
+class Delivery(models.Model):
+    date = models.DateTimeField()
+    accountId = models.ForeignKey(
+        Account, on_delete=models.DO_NOTHING, blank=True, null=True)
+    contactId = models.ForeignKey(
+        Contact, on_delete=models.DO_NOTHING, blank=True, null=True)
+    status = models.CharField(
+        max_length=32,
+    )
+    orderId = models.IntegerField(blank=True, null=True)
+    wazeLink = models.CharField(max_length=255, blank=True, null=True)
+    approvalLink = models.CharField(max_length=255, blank=True, null=True)
 
 
 class Quote(models.Model):
@@ -152,7 +166,7 @@ class QutoeItem(models.Model):
 
 
 class Order(models.Model):
-    orderDate = models.DateField(default=now, blank=True, null=True)
+    orderDate = models.DateTimeField(default=now, blank=True, null=True)
 
     accountId = models.ForeignKey(Account, on_delete=models.DO_NOTHING)
     contactId = models.ForeignKey(
@@ -169,8 +183,9 @@ class Order(models.Model):
     notes = models.TextField(blank=True, null=True)
     quoteId = models.ForeignKey(
         Quote, on_delete=models.DO_NOTHING, blank=True, null=True)
-    delivery = models.BooleanField(default=False)
-    created = models.DateTimeField(default=now, editable=False)  # 5
+    deliveryId = models.ForeignKey(
+        Delivery, on_delete=models.CASCADE, blank=True, null=True)
+    created = models.DateTimeField(default=now, editable=False)
     created_by = models.IntegerField(blank=True, null=True)  # 4
 
 
@@ -195,19 +210,6 @@ class News(models.Model):
     active = models.BooleanField(default=True)
     created = models.DateTimeField(default=now, editable=False)  # 5
     created_by = models.IntegerField(blank=True, null=True)
-
-
-class Delivery(models.Model):
-    date = models.DateTimeField()
-    accountId = models.ForeignKey(
-        Account, on_delete=models.DO_NOTHING, blank=True, null=True)
-    contactId = models.ForeignKey(
-        Contact, on_delete=models.DO_NOTHING, blank=True, null=True)
-    status = models.CharField(
-        max_length=32,
-    )
-    wazeLink = models.CharField(max_length=255, blank=True, null=True)
-    approvalLink = models.CharField(max_length=255, blank=True, null=True)
 
 
 class User(models.Model):
@@ -249,3 +251,6 @@ class AccountContacts(models.Model):
         Contact, related_name='contactAccount', on_delete=models.CASCADE)
     active = models.BooleanField(default=True)
     created = models.DateTimeField(default=now, editable=False)
+
+    class Meta:
+        unique_together = ('accountId', 'contactId')

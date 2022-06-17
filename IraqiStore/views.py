@@ -1,3 +1,4 @@
+from ast import Del
 import logging
 import io
 import json
@@ -111,7 +112,6 @@ def upsert_user(request, pk):
             record = serializer.save()
             recordId = record.id
     except:
-        print('new user')
         try:
             serializer = userSerializer(data=request.data)
             if serializer.is_valid():
@@ -125,7 +125,7 @@ def upsert_user(request, pk):
 
 @ api_view(['GET'])
 def get_products(request):
-    products = Product.objects.all()
+    products = Product.objects.all().order_by('product_number')
     serializer = productSerializer(products, many=True)
     return Response(serializer.data)
 
@@ -245,6 +245,7 @@ def upsert_account(request, pk):
         if serializer.is_valid():
             record = serializer.save()
             recordId = record.id
+            print(serializer.data)
 
     except Exception as e:
         try:
@@ -278,32 +279,34 @@ def get_contact_accounts(request, pk):
 
 
 @ api_view(['POST'])
-def upsert_account_contact(request, pk):
+def insert_account_contact(request, pk):
     recordId = int(-1)
+
     try:
-        record = AccountContacts.objects.get(id=pk)
-        serializer = AccountContactSerializer(
-            instance=record, data=request.data)
+        serializer = AccountContactSerializer(data=request.data)
         if serializer.is_valid():
             record = serializer.save()
             recordId = record.id
-            print(serializer.data)
 
     except Exception as e:
-        try:
-            serializer = AccountContactSerializer(data=request.data)
-            if serializer.is_valid():
-                record = serializer.save()
-                recordId = record.id
-
-        except Exception as e:
-            return HttpResponse('Error while upserting an AccountContactSerializer.', status=400)
+        return HttpResponse('Error while inserting an AccountContactSerializer.', status=400)
     return HttpResponse(str(recordId))
+
+
+@ api_view(['POST'])
+def delete_account_contact(request, accountId, contactId):
+    try:
+        item = AccountContacts.objects.filter(
+            accountId=accountId).filter(contactId=contactId)
+        item.delete()
+    except:
+        return HttpResponse('Error while upserting an quote item.')
+    return HttpResponse('success')
 
 
 @ api_view(['GET'])
 def get_quotes(request):
-    quotes = Quote.objects.all()
+    quotes = Quote.objects.all().order_by('quote_number')
     serializer = quoteSerializer(quotes, many=True)
     return Response(serializer.data)
 
@@ -403,7 +406,7 @@ def delete_quote_item(request, pk):
 
 @ api_view(['GET'])
 def get_orders(request):
-    orders = Order.objects.all()
+    orders = Order.objects.all().order_by('order_number')
     serializer = orderSerializer(orders, many=True)
 
     return Response(serializer.data)
@@ -432,14 +435,13 @@ def get_single_order(request, pk):
 
 @ api_view(['POST'])
 def upsert_order(request, pk):
-    print(request)
+    recordId = int(-1)
     try:
         record = Order.objects.get(id=pk)
         serializer = orderSerializer(instance=record, data=request.data)
         if serializer.is_valid():
             record = serializer.save()
             recordId = record.id
-
     except Exception as e:
         try:
             serializer = orderSerializer(data=request.data)
@@ -448,6 +450,7 @@ def upsert_order(request, pk):
                 recordId = record.id
 
         except Exception as e:
+
             logging.debug(e)
             return HttpResponse('Error while upserting an account.', status=400)
 
@@ -564,20 +567,26 @@ def get_single_delivery(request, pk):
 
 @ api_view(['POST'])
 def upsert_delivery(request, pk):
+    recordId = int(-1)
+    print(request.data)
+
     try:
         record = Delivery.objects.get(id=pk)
         serializer = deliverySerializer(instance=record, data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            record = serializer.save()
+            recordId = record.id
     except:
         try:
             serializer = deliverySerializer(data=request.data)
             if serializer.is_valid():
-                serializer.save()
-        except:
-            return('Error while upserting a Delivery.')
+                record = serializer.save()
+                recordId = record.id
 
-    return Response(serializer.data)
+        except:
+            HttpResponse('Error while upserting an delivery item.')
+
+    return HttpResponse(str(recordId))
 
 
 @ api_view(['POST'])
