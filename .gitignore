@@ -105,3 +105,7 @@ venv.bak/
 
 .pdf
 .ttf
+
+/pdfs
+
+db*sqlite*
