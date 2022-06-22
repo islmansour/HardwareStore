@@ -74,7 +74,7 @@
 
 17-06-2022
 ----------
-Allow manager to pick which legal form to send to client
+Allow manager to pick which legal form to send to client -- DONE
     - All
     - Option 1
     - Option 2
