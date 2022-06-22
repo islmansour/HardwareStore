@@ -71,3 +71,14 @@
 - העמסה
 - ביטול
 - נמסר
+
+17-06-2022
+----------
+Allow manager to pick which legal form to send to client
+    - All
+    - Option 1
+    - Option 2
+
+Remove Statistics
+
+Allow changing Language

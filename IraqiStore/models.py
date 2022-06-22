@@ -37,7 +37,8 @@ class LegalDocument(models.Model):
     active = models.BooleanField(default=True)
     contactId = models.IntegerField(blank=True, null=True)
     accountId = models.IntegerField(blank=True, null=True)
-    documentName = models.TextField(blank=True, null=True)
+    documentLink = models.TextField(blank=True, null=True)
+    name = models.CharField(max_length=50,)
     active = models.BooleanField(default=True)
     created = models.DateTimeField(default=now, editable=False)  # 4
 
@@ -219,6 +220,7 @@ class User(models.Model):
     active = models.BooleanField(default=True)
     created = models.DateTimeField(default=now, editable=False)  # 5
     created_by = models.IntegerField(blank=True, null=True)
+    userType = models.CharField(max_length=50, blank=True, null=True)
 
 
 class Notification(models.Model):

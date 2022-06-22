@@ -2,6 +2,8 @@ from ast import Del
 import logging
 import io
 import json
+from pathlib import Path
+from django.core.files import File
 
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -9,7 +11,6 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from IraqiStore.models import LOV, Account, AccountContacts, Contact, Delivery, Inventory, LegalDocument, News, Order, OrderItem, Product, Quote, QutoeItem, User
 from .serializers import AccountContactSerializer, FileSerializer, accountSerializer, contactSerializer, deliverySerializer, inventorySerializer, legalDocSerializer, lovSerializer, newsSerializer, orderItemSerializer, orderSerializer, productSerializer, quoteItemSerializer, quoteSerializer, userSerializer
-
 
 from rest_framework import viewsets
 from rest_framework import status
@@ -610,3 +611,16 @@ def upsert_legal_document(request, pk):
             HttpResponse('Error while upserting an order item.')
 
     return HttpResponse(str(recordId))
+
+
+@ api_view(['GET'])
+def getPDF(request, file):
+    path = Path('./pdfs/'+file)
+
+    with path.open(mode='rb') as pdf:
+        response = HttpResponse(pdf, content_type='application/pdf')
+        filename = file
+        response['Content-Disposition'] = 'attachment; filename="{}"'.format(
+            filename)
+
+        return response

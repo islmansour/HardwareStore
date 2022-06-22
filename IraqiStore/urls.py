@@ -56,7 +56,7 @@ urlpatterns = [
     path('insert_account_contact/', views.insert_account_contact),
     path('delete_account_contact/<str:accountId>/<str:contactId>',
          views.delete_account_contact),
-
+    path('getPDF/<str:file>', views.getPDF),
     path('upload/', include(router.urls)),
 
 ]
