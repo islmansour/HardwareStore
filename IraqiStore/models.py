@@ -221,6 +221,8 @@ class User(models.Model):
     created = models.DateTimeField(default=now, editable=False)  # 5
     created_by = models.IntegerField(blank=True, null=True)
     userType = models.CharField(max_length=50, blank=True, null=True)
+    language = models.CharField(
+        default="he", max_length=50, blank=True, null=True)
 
 
 class Notification(models.Model):

@@ -75,10 +75,37 @@
 17-06-2022
 ----------
 Allow manager to pick which legal form to send to client -- DONE
-    - All
-    - Option 1
-    - Option 2
+    - All (REMOVED)
+    - Option 1 - DONE
+    - Option 2 - DONE
 
-Remove Statistics
+Remove Statistics - DONE
+Allow changing Language - DONE
 
-Allow changing Language
+23-06-2022
+----------
+Translate POBOX, ZIPCode upsert Account sceen, products screen - DONE
+Change start in dropdowns (account type, order status, quote status, account pick, contact pick) DONE
+Display notifications
+Add titles for each icon
+    - Management Screen - DONE
+    - Upsert Account tabs - DONE
+    - Contact upsert tabs - DONE
+
+Add Legal Document to contacts Tab
+
+Add Chat 
+
+Cron jobs for push notifications
+  Admin side:
+    - client first login
+    - client new order
+    - client sign delivery
+    - client sign agreement(s)
+    - client modified order or quote
+  Client Side:
+    - order loading process has began
+    - new ad/new prod/
+    - notify client of agreements they need to sign
+
+

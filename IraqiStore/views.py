@@ -140,19 +140,23 @@ def get_single_product(request, pk):
 
 @ api_view(['POST'])
 def upsert_product(request, pk):
+    recordId = int(-1)
     try:
         record = Product.objects.get(id=int(pk))
         serializer = productSerializer(instance=record, data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            record = serializer.save()
+            recordId = record.id
     except:
         try:
             serializer = productSerializer(data=request.data)
             if serializer.is_valid():
-                serializer.save()
-        except Exception as e:
-            HttpResponse("Unable to upsert a product.", status=400)
-    return HttpResponse("Succeeded to upsert a product.")
+                record = serializer.save()
+                recordId = record.id
+        except:
+            HttpResponse('Error while upserting a product.')
+
+    return HttpResponse(str(recordId))
 
 
 @ api_view(['GET'])
