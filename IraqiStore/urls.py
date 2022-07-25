@@ -21,6 +21,7 @@ urlpatterns = [
     path('order_list_by_contact/<contactId>', views.get_orders_by_contact),
     path('order_item_list/<orderId>', views.get_order_item_by_order),
     path('get_single_inventory/<str:pk>', views.get_single_inventory),
+    path('get_accounts_by_user/<str:contactId>', views.get_accounts_by_user),
     path('get_users', views.get_users),
     path('get_single_user/<str:pk>', views.get_single_user),
     path('get_user_by_uid/<str:pk>', views.get_user_by_uid),

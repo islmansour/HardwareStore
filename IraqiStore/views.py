@@ -48,6 +48,7 @@ def iraqi_view(request):
 
 @ api_view(['GET'])
 def get_lovs(request):
+
     lov = LOV.objects.all()
     serializer = lovSerializer(lov, many=True)
     return Response(serializer.data)
@@ -234,6 +235,13 @@ def get_accounts(request):
 
 
 @ api_view(['GET'])
+def get_accounts_by_user(request, contactId):
+    accounts = Account.objects.filter(contactId=contactId).order_by('name')
+    serializer = accountSerializer(accounts, many=True)
+    return Response(serializer.data)
+
+
+@ api_view(['GET'])
 def get_single_account(request, pk):
     accounts = Account.objects.all(id=pk)
     serializer = accountSerializer(accounts, many=False)
@@ -411,10 +419,24 @@ def delete_quote_item(request, pk):
 
 @ api_view(['GET'])
 def get_orders(request):
-    orders = Order.objects.all().order_by('order_number')
-    serializer = orderSerializer(orders, many=True)
+    _user_id = ""
+    _user_admin = False
+    usr = User.objects.filter(uid=str(request.headers['UID']))
+    Userializer = userSerializer(usr, many=True)
+    for x in Userializer.data:
+        _user_id = x.get('contactId')
+        _user_admin = x.get('admin')
 
-    return Response(serializer.data)
+    if _user_admin == True:
+        orders = Order.objects.all().order_by('order_number')
+        serializer = orderSerializer(orders, many=True)
+        return Response(serializer.data)
+
+    if _user_admin == False:
+        orders = Order.objects.filter(
+            contactId=_user_id).order_by('order_number')
+        serializer = orderSerializer(orders, many=True)
+        return Response(serializer.data)
 
 
 @ api_view(['GET'])
@@ -455,7 +477,6 @@ def upsert_order(request, pk):
                 recordId = record.id
 
         except Exception as e:
-
             logging.debug(e)
             return HttpResponse('Error while upserting an account.', status=400)
 
