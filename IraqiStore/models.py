@@ -85,6 +85,7 @@ class Product(models.Model):
     created_by = models.IntegerField(blank=True, null=True)  # 5
     img = models.CharField(max_length=2048, blank=True, null=True)  # 6
     active = models.BooleanField(default=True)  # 7
+    hidden = models.BooleanField(default=False)  # 7
     discount = models.FloatField(default=0, blank=True, null=True,
                                  validators=[MinValueValidator(0), MaxValueValidator(100)])
     category = models.CharField(max_length=50, blank=True, null=True)
