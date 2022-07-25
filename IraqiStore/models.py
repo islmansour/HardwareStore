@@ -14,23 +14,38 @@ from django.db.models.functions import Substr, Length
 
 
 def getuuid():
-    return str(200000+Order.objects.latest('id').id+1)
+    if Order.objects.count == 0:
+        return str(200000)
+    else:
+        return str(200000+Order.objects.latest('id').id+1)
 
 
 def getProductUID():
-    return str(300000+Product.objects.latest('id').id+1)
+    if Product.objects.count == 0:
+        return str(300000)
+    else:
+        return str(300000+Product.objects.latest('id').id+1)
 
 
 def getAccountUID():
-    return str(400000+Account.objects.latest('id').id+1)
+    if Account.objects.count == 0:
+        return str(400000)
+    else:
+        return str(400000+Account.objects.latest('id').id+1)
 
 
 def getQuoteUID():
-    return str(500000+Quote.objects.latest('id').id+1)
+    if Quote.objects.count == 0:
+        return str(500000)
+    else:
+        return str(500000+Quote.objects.latest('id').id+1)
 
 
 def getOrderUID():
-    return str(200000+Order.objects.latest('id').id+1)
+    if Order.objects.count == 0:
+        return str(200000)
+    else:
+        return str(200000+Order.objects.latest('id').id+1)
 
 
 class LegalDocument(models.Model):
