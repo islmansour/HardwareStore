@@ -14,35 +14,35 @@ from django.db.models.functions import Substr, Length
 
 
 def getuuid():
-    if Order.objects.count == 0:
+    if Order.objects.count() == 0:
         return str(200000)
     else:
         return str(200000+Order.objects.latest('id').id+1)
 
 
 def getProductUID():
-    if Product.objects.count == 0:
+    if Product.objects.count() == 0:
         return str(300000)
     else:
         return str(300000+Product.objects.latest('id').id+1)
 
 
 def getAccountUID():
-    if Account.objects.count == 0:
+    if Account.objects.count() == 0:
         return str(400000)
     else:
         return str(400000+Account.objects.latest('id').id+1)
 
 
 def getQuoteUID():
-    if Quote.objects.count == 0:
+    if Quote.objects.count() == 0:
         return str(500000)
     else:
         return str(500000+Quote.objects.latest('id').id+1)
 
 
 def getOrderUID():
-    if Order.objects.count == 0:
+    if Order.objects.count() == 0:
         return str(200000)
     else:
         return str(200000+Order.objects.latest('id').id+1)

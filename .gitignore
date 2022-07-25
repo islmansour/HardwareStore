@@ -107,5 +107,7 @@ venv.bak/
 .ttf
 
 /pdfs
+db.sqlite3
+./db.sqlite3
 
 db*sqlite*
