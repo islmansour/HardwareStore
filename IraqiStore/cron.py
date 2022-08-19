@@ -3,7 +3,7 @@ import firebase_admin
 from firebase_admin import credentials, messaging
 
 cred = credentials.Certificate(
-    "/Users/islammansour/Documents/AppProjects/HardwareStore/pdfs/serviceAccountKey.json")
+    "./pdfs/serviceAccountKey.json")
 firebase_admin.initialize_app(cred)
 
 
