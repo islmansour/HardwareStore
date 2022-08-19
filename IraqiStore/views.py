@@ -48,7 +48,6 @@ def iraqi_view(request):
 
 @ api_view(['GET'])
 def get_lovs(request):
-
     lov = LOV.objects.all()
     serializer = lovSerializer(lov, many=True)
     return Response(serializer.data)
@@ -134,8 +133,8 @@ def get_products(request):
 
 @ api_view(['GET'])
 def get_single_product(request, pk):
-    products = Product.objects.get(id=pk)
-    serializer = productSerializer(products, many=False)
+    products = Product.objects.filter(product_number=pk)
+    serializer = productSerializer(products, many=True)
     return Response(serializer.data)
 
 
@@ -533,8 +532,16 @@ def upsert_order_item(request, pk):
 
 @ api_view(['GET'])
 def get_news(request):
-    news = News.objects.all()
+    news = News.objects.all().order_by('-created')
     serializer = newsSerializer(news, many=True)
+    return Response(serializer.data)
+
+
+@ api_view(['GET'])
+def get_active_news(request):
+    news = News.objects.filter(active=True)
+    serializer = newsSerializer(news, many=True)
+    print(serializer.data)
     return Response(serializer.data)
 
 
@@ -547,20 +554,26 @@ def get_single_news(request, pk):
 
 @ api_view(['POST'])
 def upsert_news(request, pk):
+    recordId = int(-1)
+
     try:
         record = News.objects.get(id=pk)
         serializer = newsSerializer(instance=record, data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            record = serializer.save()
+            recordId = record.id
     except:
         try:
             serializer = newsSerializer(data=request.data)
             if serializer.is_valid():
-                serializer.save()
-        except:
-            return('Error while upserting a news.')
+                record = serializer.save()
+                recordId = record.id
 
-    return Response(serializer.data)
+        except:
+            HttpResponse('-1')
+
+    print(str(recordId))
+    return HttpResponse(str(recordId))
 
 
 @ api_view(['GET'])

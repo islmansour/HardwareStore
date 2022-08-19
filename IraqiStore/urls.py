@@ -26,6 +26,7 @@ urlpatterns = [
     path('get_single_user/<str:pk>', views.get_single_user),
     path('get_user_by_uid/<str:pk>', views.get_user_by_uid),
     path('news_list', views.get_news),
+    path('active_news_list', views.get_active_news),
     path('delivery_list', views.get_deliverys),
     path('delivery_list_by_account', views.get_deliverys_by_account),
     path('delivery_list_by_contact', views.get_deliverys_by_contact),

@@ -158,8 +158,8 @@ class Quote(models.Model):
     accountId = models.ForeignKey(Account, on_delete=models.DO_NOTHING)
     contactId = models.ForeignKey(
         Contact, on_delete=models.DO_NOTHING, blank=True, null=True)
-    status = models.CharField(
-        max_length=32, blank=True, null=True)
+    status = models.CharField(default='new',
+                              max_length=32, blank=True, null=True)
     quote_number = models.CharField(
         max_length=12, default=getQuoteUID, blank=True, null=True)
 
@@ -188,8 +188,8 @@ class Order(models.Model):
     accountId = models.ForeignKey(Account, on_delete=models.DO_NOTHING)
     contactId = models.ForeignKey(
         Contact, on_delete=models.DO_NOTHING, blank=True, null=True)
-    status = models.CharField(
-        max_length=32, blank=True, null=True)
+    status = models.CharField(default='new',
+                              max_length=32, blank=True, null=True)
     order_number = models.CharField(
         max_length=12, default=getOrderUID, blank=True, null=True)
 
@@ -223,8 +223,10 @@ class OrderItem(models.Model):
 
 class News(models.Model):
     desc = models.TextField(blank=True, null=True)
+    url = models.CharField(max_length=2048, blank=True, null=True)  # 6
     type = models.CharField(max_length=50, blank=True, null=True)
-    active = models.BooleanField(default=True)
+    active = models.BooleanField(default=False)
+    productId = models.IntegerField(blank=True, null=True)
     created = models.DateTimeField(default=now, editable=False)  # 5
     created_by = models.IntegerField(blank=True, null=True)
 

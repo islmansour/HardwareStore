@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
 from pathlib import Path
-
+from firebase_admin import initialize_app
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -32,13 +32,16 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = [
     'IraqiStore',
+    'django_crontab',
+    "django_cron",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework'
+    'rest_framework',  # For Rest API
+    'fcm_django',
 ]
 
 MIDDLEWARE = [
@@ -155,3 +158,9 @@ LOGGING = {
         },
     }
 }
+
+
+CRONJOBS = [
+    ('* * * * *', 'IraqiStore.cron.my_scheduled_job', '>> test_log_from_setting.log'),
+    # "IraqiStore.cron.news_notify",
+]

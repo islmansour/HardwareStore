@@ -1,0 +1,1 @@
+/usr/bin/python3  /Users/islammansour/Documents/AppProjects/HardwareStore/manage.py crontab run 44e87d07bc8be713b81ca55ac4afc249 
