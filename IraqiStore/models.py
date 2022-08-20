@@ -103,6 +103,10 @@ class Inventory(models.Model):
     created_by = models.IntegerField(blank=True, null=True)  # 4
 
 
+class CronTest(models.Model):
+    text = models.CharField(max_length=500)
+
+
 class Contact(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
