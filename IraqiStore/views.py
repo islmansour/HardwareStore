@@ -9,8 +9,8 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from IraqiStore.models import LOV, Account, AccountContacts, Contact, Delivery, Inventory, LegalDocument, News, Order, OrderItem, Product, Quote, QutoeItem, User
-from .serializers import AccountContactSerializer, FileSerializer, accountSerializer, contactSerializer, deliverySerializer, inventorySerializer, legalDocSerializer, lovSerializer, newsSerializer, orderItemSerializer, orderSerializer, productSerializer, quoteItemSerializer, quoteSerializer, userSerializer
+from IraqiStore.models import Notification, LOV, Account, AccountContacts, Contact, Delivery, Inventory, LegalDocument, News, Order, OrderItem, Product, Quote, QutoeItem, User
+from .serializers import AccountContactSerializer, FileSerializer, accountSerializer, contactSerializer, deliverySerializer, inventorySerializer, legalDocSerializer, lovSerializer, newsSerializer, notificationsSerializer, orderItemSerializer, orderSerializer, productSerializer, quoteItemSerializer, quoteSerializer, userSerializer
 
 from rest_framework import viewsets
 from rest_framework import status
@@ -555,7 +555,7 @@ def get_single_news(request, pk):
 @ api_view(['POST'])
 def upsert_news(request, pk):
     recordId = int(-1)
-
+    print('upserting news')
     try:
         record = News.objects.get(id=pk)
         serializer = newsSerializer(instance=record, data=request.data)
@@ -564,10 +564,16 @@ def upsert_news(request, pk):
             recordId = record.id
     except:
         try:
+            print('new news')
             serializer = newsSerializer(data=request.data)
             if serializer.is_valid():
                 record = serializer.save()
                 recordId = record.id
+                _notify = Notification.objects.create(
+                    entity="news", entityId=recordId, message="test")
+                nofSer = notificationsSerializer(data=_notify)
+
+                nofSer.save()
 
         except:
             HttpResponse('-1')

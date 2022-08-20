@@ -2,7 +2,7 @@
 import firebase_admin
 from firebase_admin import credentials, messaging
 
-from IraqiStore.models import CronTest
+from IraqiStore.models import CronTest, Notification, User
 
 cred = credentials.Certificate(
     "./pdfs/serviceAccountKey.json")
@@ -40,8 +40,21 @@ def sendPush(title, msg, registration_token, dataObject=None):
 
 
 def my_scheduled_job():
-    tokens = ["dwyJ-fW-Lkteo3nSn8mdSu:APA91bG2yzQJeEtXJU8tM4utv91Xse_2w4IQ86Gz3v68QQ0GXTCZFgruBxIEDS2BVSBfiZ_NNf__U9Rdk63SRV7OssFeSiDo_nFub9cuGHcjRKZmn8yZFvSrXQHqENaiZk8W2k5slVwi"]
-    sendPush("Hi", "This is my next msg", tokens)
+    #tokens = ["dwyJ-fW-Lkteo3nSn8mdSu:APA91bG2yzQJeEtXJU8tM4utv91Xse_2w4IQ86Gz3v68QQ0GXTCZFgruBxIEDS2BVSBfiZ_NNf__U9Rdk63SRV7OssFeSiDo_nFub9cuGHcjRKZmn8yZFvSrXQHqENaiZk8W2k5slVwi"]
+    qnotification_set = Notification.objects.all()
+
+    for notification in qnotification_set.iterator():
+        if notification.token is None:
+            _users = User.objects.all()
+            print(_users.count())
+
+            for _user in _users:
+                if _user.admin == True:
+                    print('admin')
+                elif _user.token is not None:
+                    print(notification.message)
+                    print(_user.token)
+                    sendPush("BlockIraqi", notification.message, _user.token)
 
 
 def add_text():

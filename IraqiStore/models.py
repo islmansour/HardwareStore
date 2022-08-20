@@ -250,6 +250,9 @@ class User(models.Model):
 
 class Notification(models.Model):
     message = models.CharField(max_length=256, blank=True, null=True)
+    entity = models.CharField(max_length=30, blank=True, null=True)
+    token = models.TextField(blank=True, null=True)
+    entityId = models.IntegerField(blank=True, null=True)
     created = models.DateTimeField(default=now, editable=False)
     sent = models.BooleanField(default=True)
     target = models.IntegerField(blank=True, null=True)
