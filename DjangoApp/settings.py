@@ -163,6 +163,6 @@ LOGGING = {
 CRONJOBS = [
     ('* * * * *', 'IraqiStore.cron.my_scheduled_job',
      '>> test_log_from_setting.log 2>&1'),
-    ('*/1 * * * *', 'text.cron.add_text')
+    ('*/1 * * * *', 'IraqiStore.cron.add_text')
     # "IraqiStore.cron.news_notify",
 ]
