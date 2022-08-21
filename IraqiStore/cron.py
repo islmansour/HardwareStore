@@ -47,19 +47,21 @@ def my_scheduled_job():
 
         if notification.token is None or notification.token == "":
             print('---- no token in notification ----')
-            user_set = User.objects.all()
-            print('# of users: ' + user_set.count())
-            sendPush("BlockIraqi", "users:" +
-                     user_set.count(), tokens)
-            for _user in user_set:
-                if _user.token is None:
-                    sendPush("BlockIraqi", "not token for:" +
-                             _user.uid, tokens)
-                if _user.admin == True:
-                    pass
-                elif _user.token is not None:
+            try:
+                user_set = User.objects.all()
+                tokens = []
+                for _user in user_set:
+                    if _user.admin == True:
+                        pass
+                    elif _user.token is not None:
+                        tokens.append(_user.token)
 
-                    sendPush("BlockIraqi", notification.message, _user.token)
+            except Exception as inst:
+                print(type(inst))    # the exception instance
+                print(inst.args)     # arguments stored in .args
+                print(inst)
+            sendPush("BlockIraqi",
+                     notification.message, tokens)
 
 
 def add_text():
