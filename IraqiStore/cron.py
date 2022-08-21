@@ -2,7 +2,7 @@
 import firebase_admin
 from firebase_admin import credentials, messaging
 
-from IraqiStore.models import CronTest, Notification, User
+from IraqiStore.models import CronTest, Notification, User, LOV
 
 cred = credentials.Certificate(
     "./pdfs/serviceAccountKey.json")
@@ -27,40 +27,66 @@ def sendPush(title, msg, registration_token, dataObject=None):
     print('Successfully sent message:', response)
 
 
-# class news_notify(CronJobBase):
-#     RUN_EVERY_MINS = 2  # every 1 minutes
+def getNotificationText(msgCode, locale):
+    _msgText = ''
+    try:
+        _msg = LOV.objects.filter(type='CRON_NOTIFICATION').filter(
+            language=locale).filter(name=msgCode)[0]
 
-#     schedule = Schedule(run_every_mins=RUN_EVERY_MINS)
-#     code = 'IraqiStore.my_scheduled_job'    # a unique code
+        _msgText = _msg.value
+    except Exception as inst:
+        _msgText = '*** Error retreiving notification text by code (cron.py:getNotificationText)'
+        print(type(inst))    # the exception instance
+        print(inst.args)     # arguments stored in .args
+        print(inst)
+    return _msgText
 
-#     def do(self):
-#         print('cron running..')
-#         tokens = ["dwyJ-fW-Lkteo3nSn8mdSu:APA91bG2yzQJeEtXJU8tM4utv91Xse_2w4IQ86Gz3v68QQ0GXTCZFgruBxIEDS2BVSBfiZ_NNf__U9Rdk63SRV7OssFeSiDo_nFub9cuGHcjRKZmn8yZFvSrXQHqENaiZk8W2k5slVwi"]
-#         sendPush("Hi", "This is my next msg", tokens)
+# sending notifications:
+#   Whenever there is a notification, we add a record to the Notification enity, e.g creating News will trigger a notification to all
+#   Users.
+#   The process will loop for all notificaiton that were NOT sent yet, then loop for all users and sends the notification to them. The process
+#   takes into consideration the selected lannguage for the user, and uses the getNotificationText function to find the Text to be sent to the
+#   user based on the language.
+#   We then update the notification flag "Sent" to true;
 
 
 def my_scheduled_job():
-    tokens = ["dwyJ-fW-Lkteo3nSn8mdSu:APA91bG2yzQJeEtXJU8tM4utv91Xse_2w4IQ86Gz3v68QQ0GXTCZFgruBxIEDS2BVSBfiZ_NNf__U9Rdk63SRV7OssFeSiDo_nFub9cuGHcjRKZmn8yZFvSrXQHqENaiZk8W2k5slVwi"]
+
     qnotification_set = Notification.objects.filter(sent=False)
 
     for notification in qnotification_set.iterator():
-
         if notification.token is None or notification.token == "":
             try:
                 user_set = User.objects.filter(active=True)
-                tokens = []
+                tokensAr = []
+                tokenEn = []
+                tokenHe = []
+                msgAr = getNotificationText(
+                    notification.message, 'ar')
+                msgHe = getNotificationText(
+                    notification.message, 'he')
+                msgEn = getNotificationText(
+                    notification.message, 'en')
                 for _user in user_set:
                     if _user.admin == True:
                         pass
-                    elif _user.token is not None:
-                        tokens.append(_user.token)
+                    elif _user.language == "ar":
+                        tokensAr.append(_user.token)
+                    elif _user.language == "he":
+                        tokenHe.append(_user.token)
+                    elif _user.language == "en":
+                        tokenEn.append(_user.token)
 
             except Exception as inst:
                 print(type(inst))    # the exception instance
                 print(inst.args)     # arguments stored in .args
                 print(inst)
-            sendPush("BlockIraqi",
-                     notification.message, tokens)
+            sendPush("بلوك عراقي",
+                     msgAr, tokensAr)
+            sendPush("בלוק עיראקי",
+                     msgHe, tokenHe)
+            sendPush("Block Iraqi",
+                     msgEn, tokenEn)
             notification.sent = True
             notification.save()
 

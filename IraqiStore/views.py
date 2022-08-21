@@ -564,15 +564,13 @@ def upsert_news(request, pk):
             recordId = record.id
     except:
         try:
-            print('new news')
             serializer = newsSerializer(data=request.data)
             if serializer.is_valid():
                 record = serializer.save()
                 recordId = record.id
                 _notify = Notification.objects.create(
-                    entity="news", entityId=recordId, message="test")
+                    entity="news", entityId=recordId, message="new_news_available")
                 nofSer = notificationsSerializer(data=_notify)
-
                 nofSer.save()
 
         except:
