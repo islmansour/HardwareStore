@@ -44,8 +44,8 @@ def my_scheduled_job():
     qnotification_set = Notification.objects.all()
 
     for notification in qnotification_set.iterator():
-        print(notification.token)
-        if notification.token is None:
+
+        if notification.token is None or notification.token == "":
             _users = User.objects.all()
             sendPush("BlockIraqi", "users:" +
                      _users.count(), tokens)
