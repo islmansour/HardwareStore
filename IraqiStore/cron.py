@@ -47,10 +47,11 @@ def my_scheduled_job():
 
         if notification.token is None or notification.token == "":
             print('---- no token in notification ----')
-            _users = User.objects.all()
+            user_set = User.objects.all()
+            print('# of users: ' + user_set.count())
             sendPush("BlockIraqi", "users:" +
-                     _users.count(), tokens)
-            for _user in _users:
+                     user_set.count(), tokens)
+            for _user in user_set:
                 if _user.token is None:
                     sendPush("BlockIraqi", "not token for:" +
                              _user.uid, tokens)
