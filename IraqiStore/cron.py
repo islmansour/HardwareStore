@@ -41,14 +41,13 @@ def sendPush(title, msg, registration_token, dataObject=None):
 
 def my_scheduled_job():
     tokens = ["dwyJ-fW-Lkteo3nSn8mdSu:APA91bG2yzQJeEtXJU8tM4utv91Xse_2w4IQ86Gz3v68QQ0GXTCZFgruBxIEDS2BVSBfiZ_NNf__U9Rdk63SRV7OssFeSiDo_nFub9cuGHcjRKZmn8yZFvSrXQHqENaiZk8W2k5slVwi"]
-    qnotification_set = Notification.objects.all()
+    qnotification_set = Notification.objects.filter(sent=False)
 
     for notification in qnotification_set.iterator():
 
         if notification.token is None or notification.token == "":
-            print('---- no token in notification ----')
             try:
-                user_set = User.objects.all()
+                user_set = User.objects.filter(active=True)
                 tokens = []
                 for _user in user_set:
                     if _user.admin == True:
@@ -62,6 +61,8 @@ def my_scheduled_job():
                 print(inst)
             sendPush("BlockIraqi",
                      notification.message, tokens)
+            notification.sent = True
+            notification.save()
 
 
 def add_text():
