@@ -262,9 +262,9 @@ class Notification(models.Model):
 class NotificationRecipient(models.Model):
     messageId = models.ForeignKey(
         Notification, on_delete=models.CASCADE, related_name='notificationRecipients', blank=True, null=True)
-    recipientId = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='notificationRecipients', blank=True, null=True)
+    userId = models.IntegerField(blank=True, null=True)
     seen = models.DateTimeField(blank=True, null=True)
+    content = models.TextField(blank=True, null=True)
     created = models.DateTimeField(default=now, editable=False)
 
 

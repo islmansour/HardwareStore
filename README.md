@@ -98,14 +98,18 @@ Add Chat
 
 Cron jobs for push notifications
   Admin side:
-    - client first login
-    - client new order
+    - client first login DONE
+    - client new order DONE
     - client sign delivery
     - client sign agreement(s)
-    - client modified order or quote
+    - client modified order or quote DONE - no quotes
   Client Side:
     - order loading process has began
     - new ad/new prod/
     - notify client of agreements they need to sign
+
+
+    [BUG]
+    AUTO LOGIN
 
 

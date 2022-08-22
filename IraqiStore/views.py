@@ -9,7 +9,7 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from IraqiStore.models import Notification, LOV, Account, AccountContacts, Contact, Delivery, Inventory, LegalDocument, News, Order, OrderItem, Product, Quote, QutoeItem, User
+from IraqiStore.models import Notification, LOV, Account, AccountContacts, Contact, Delivery, Inventory, LegalDocument, News, NotificationRecipient, Order, OrderItem, Product, Quote, QutoeItem, User
 from .serializers import AccountContactSerializer, FileSerializer, accountSerializer, contactSerializer, deliverySerializer, inventorySerializer, legalDocSerializer, lovSerializer, newsSerializer, notificationsSerializer, orderItemSerializer, orderSerializer, productSerializer, quoteItemSerializer, quoteSerializer, userSerializer
 
 from rest_framework import viewsets
@@ -555,7 +555,7 @@ def get_single_news(request, pk):
 @ api_view(['POST'])
 def upsert_news(request, pk):
     recordId = int(-1)
-    print('upserting news')
+
     try:
         record = News.objects.get(id=pk)
         serializer = newsSerializer(instance=record, data=request.data)
@@ -578,6 +578,14 @@ def upsert_news(request, pk):
 
     print(str(recordId))
     return HttpResponse(str(recordId))
+
+
+@ api_view(['GET'])
+def get_user_notifications(request, pk):
+    items = NotificationRecipient.objects.filter(
+        userId=int(pk))
+    serializer = notificationsSerializer(items, many=True)
+    return Response(serializer.data)
 
 
 @ api_view(['GET'])

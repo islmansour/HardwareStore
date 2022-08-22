@@ -2,7 +2,7 @@
 import firebase_admin
 from firebase_admin import credentials, messaging
 
-from IraqiStore.models import CronTest, Notification, User, LOV
+from IraqiStore.models import CronTest, Notification, User, LOV, NotificationRecipient
 
 cred = credentials.Certificate(
     "./pdfs/serviceAccountKey.json")
@@ -53,7 +53,6 @@ def getNotificationText(msgCode, locale):
 def my_scheduled_job():
 
     qnotification_set = Notification.objects.filter(sent=False)
-
     for notification in qnotification_set.iterator():
         if notification.token is None or notification.token == "":
             try:
@@ -71,10 +70,16 @@ def my_scheduled_job():
                     if _user.admin == True:
                         pass
                     elif _user.language == "ar":
+                        NotificationRecipient.objects.create(
+                            messageId=notification.id, recipientId=_user.id, content=msgAr)
                         tokensAr.append(_user.token)
                     elif _user.language == "he":
+                        NotificationRecipient.objects.create(
+                            messageId=notification.id, recipientId=_user.id, content=msgHe)
                         tokenHe.append(_user.token)
                     elif _user.language == "en":
+                        NotificationRecipient.objects.create(
+                            messageId=notification.id, recipientId=_user.id, content=msgEn)
                         tokenEn.append(_user.token)
 
             except Exception as inst:

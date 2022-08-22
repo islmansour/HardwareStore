@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from IraqiStore.models import AccountContacts, File, LOV, Account, Contact, Delivery, LegalDocument, News, Notification, Order, OrderItem, Product, Inventory, Quote, QutoeItem, User
+from IraqiStore.models import AccountContacts, File, LOV, Account, Contact, Delivery, LegalDocument, News, Notification, NotificationRecipient, Order, OrderItem, Product, Inventory, Quote, QutoeItem, User
 
 
 # Serializers define the API representation.
@@ -18,6 +18,12 @@ class lovSerializer(serializers.ModelSerializer):
 class notificationsSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
+        fields = '__all__'
+
+
+class notificationRecipientSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NotificationRecipient
         fields = '__all__'
 
 
