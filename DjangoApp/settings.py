@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',  # For Rest API
-    'fcm_django',
+    #    'fcm_django',
 ]
 
 MIDDLEWARE = [
