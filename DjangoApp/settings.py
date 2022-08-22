@@ -33,7 +33,6 @@ ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [
     'IraqiStore',
     'django_crontab',
-    "django_cron",
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
