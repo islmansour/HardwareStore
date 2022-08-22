@@ -5,7 +5,7 @@ from firebase_admin import credentials, messaging
 from IraqiStore.models import CronTest, Notification, User, LOV, NotificationRecipient
 
 cred = credentials.Certificate(
-    "./pdfs/serviceAccountKey.json")
+    "/var/www/DjangoApp/pdfs/serviceAccountKey.json")
 firebase_admin.initialize_app(cred)
 
 
