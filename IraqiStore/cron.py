@@ -1,4 +1,5 @@
 # from django_cron import CronJobBase, Schedule
+from termios import PARODD
 import firebase_admin
 from firebase_admin import credentials, messaging
 
@@ -56,7 +57,7 @@ def my_scheduled_job():
     for notification in qnotification_set.iterator():
         if notification.token is None or notification.token == "":
             try:
-                user_set = User.objects.filter(active=True)
+
                 tokensAr = []
                 tokenEn = []
                 tokenHe = []
@@ -66,21 +67,55 @@ def my_scheduled_job():
                     notification.message, 'he')
                 msgEn = getNotificationText(
                     notification.message, 'en')
-                for _user in user_set:
-                    if _user.admin == True:
-                        pass
-                    elif _user.language == "ar":
-                        NotificationRecipient.objects.create(
-                            messageId=notification.id, recipientId=_user.id, content=msgAr)
-                        tokensAr.append(_user.token)
-                    elif _user.language == "he":
-                        NotificationRecipient.objects.create(
-                            messageId=notification.id, recipientId=_user.id, content=msgHe)
-                        tokenHe.append(_user.token)
-                    elif _user.language == "en":
-                        NotificationRecipient.objects.create(
-                            messageId=notification.id, recipientId=_user.id, content=msgEn)
-                        tokenEn.append(_user.token)
+
+                if notification.target is not None:
+                    user_set = User.objects.get(id=notification.target)
+                    for _user in user_set:
+                        if _user.language == "ar":
+                            NotificationRecipient.objects.create(
+                                messageId=notification.id, recipientId=_user.id, content=msgAr)
+                            tokensAr.append(_user.token)
+                        elif _user.language == "he":
+                            NotificationRecipient.objects.create(
+                                messageId=notification.id, recipientId=_user.id, content=msgHe)
+                            tokenHe.append(_user.token)
+                        elif _user.language == "en":
+                            NotificationRecipient.objects.create(
+                                messageId=notification.id, recipientId=_user.id, content=msgEn)
+                            tokenEn.append(_user.token)
+                else:
+                    user_set = User.objects.filter(active=True)
+                    for _user in user_set:
+                        if _user.admin == True:
+                            if notification.entity == 'admin':
+                                if _user.language == "ar":
+                                    NotificationRecipient.objects.create(
+                                        messageId=notification.id, recipientId=_user.id, content=msgAr)
+                                    tokensAr.append(_user.token)
+                                elif _user.language == "he":
+                                    NotificationRecipient.objects.create(
+                                        messageId=notification.id, recipientId=_user.id, content=msgHe)
+                                    tokenHe.append(_user.token)
+                                elif _user.language == "en":
+                                    NotificationRecipient.objects.create(
+                                        messageId=notification.id, recipientId=_user.id, content=msgEn)
+                                    tokenEn.append(_user.token)
+                        else:
+                            if notification.entity == 'admin':
+                                pass
+                            else:
+                                if _user.language == "ar":
+                                    NotificationRecipient.objects.create(
+                                        messageId=notification.id, recipientId=_user.id, content=msgAr)
+                                    tokensAr.append(_user.token)
+                                elif _user.language == "he":
+                                    NotificationRecipient.objects.create(
+                                        messageId=notification.id, recipientId=_user.id, content=msgHe)
+                                    tokenHe.append(_user.token)
+                                elif _user.language == "en":
+                                    NotificationRecipient.objects.create(
+                                        messageId=notification.id, recipientId=_user.id, content=msgEn)
+                                    tokenEn.append(_user.token)
 
             except Exception as inst:
                 print(type(inst))    # the exception instance

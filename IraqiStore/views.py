@@ -10,7 +10,7 @@ from django.http import HttpResponse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from IraqiStore.models import Notification, LOV, Account, AccountContacts, Contact, Delivery, Inventory, LegalDocument, News, NotificationRecipient, Order, OrderItem, Product, Quote, QutoeItem, User
-from .serializers import AccountContactSerializer, FileSerializer, accountSerializer, contactSerializer, deliverySerializer, inventorySerializer, legalDocSerializer, lovSerializer, newsSerializer, notificationsSerializer, orderItemSerializer, orderSerializer, productSerializer, quoteItemSerializer, quoteSerializer, userSerializer
+from .serializers import AccountContactSerializer, FileSerializer, accountSerializer, contactSerializer, deliverySerializer, inventorySerializer, legalDocSerializer, lovSerializer, newsSerializer, notificationRecipientSerializer, notificationsSerializer, orderItemSerializer, orderSerializer, productSerializer, quoteItemSerializer, quoteSerializer, userSerializer
 
 from rest_framework import viewsets
 from rest_framework import status
@@ -291,7 +291,7 @@ def get_contact_accounts(request, pk):
 
 
 @ api_view(['POST'])
-def insert_account_contact(request, pk):
+def insert_account_contact(request):
     recordId = int(-1)
 
     try:
@@ -474,6 +474,17 @@ def upsert_order(request, pk):
             if serializer.is_valid():
                 record = serializer.save()
                 recordId = record.id
+                #usr = User.objects.filter(uid=str(request.headers['UID']))
+                usr = User.objects.all()
+
+                Userializer = userSerializer(usr, many=True)
+                for x in Userializer.data:
+                    _user_admin = x.get('admin')
+                    if _user_admin == True:
+                        _notify = Notification.objects.create(
+                            entity="admin", entityId=recordId, message="new_order_added")
+                        nofSer = notificationsSerializer(data=_notify)
+                        nofSer.save()
 
         except Exception as e:
             logging.debug(e)
@@ -575,8 +586,6 @@ def upsert_news(request, pk):
 
         except:
             HttpResponse('-1')
-
-    print(str(recordId))
     return HttpResponse(str(recordId))
 
 
@@ -584,8 +593,31 @@ def upsert_news(request, pk):
 def get_user_notifications(request, pk):
     items = NotificationRecipient.objects.filter(
         userId=int(pk))
-    serializer = notificationsSerializer(items, many=True)
+    serializer = notificationRecipientSerializer(items, many=True)
     return Response(serializer.data)
+
+
+@ api_view(['POST'])
+def upsert_user_notification(request, pk):
+    recordId = int(-1)
+
+    try:
+        record = NotificationRecipient.objects.get(id=pk)
+        serializer = notificationRecipientSerializer(
+            instance=record, data=request.data)
+        if serializer.is_valid():
+            record = serializer.save()
+            recordId = record.id
+    except:
+        try:
+            serializer = notificationRecipientSerializer(data=request.data)
+            if serializer.is_valid():
+                record = serializer.save()
+                recordId = record.id
+
+        except:
+            HttpResponse('-1')
+    return HttpResponse(str(recordId))
 
 
 @ api_view(['GET'])
