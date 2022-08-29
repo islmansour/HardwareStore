@@ -115,10 +115,13 @@ def upsert_user(request, pk):
     except:
         try:
             serializer = userSerializer(data=request.data)
+            logging.debug(request.data)
+
             if serializer.is_valid():
                 record = serializer.save()
                 recordId = record.id
-        except:
+        except Exception as e:
+            logging.debug('*** upsert_user :' + e)
             HttpResponse('Error while upserting a contact.')
 
     return HttpResponse(str(recordId))
@@ -420,22 +423,25 @@ def delete_quote_item(request, pk):
 def get_orders(request):
     _user_id = ""
     _user_admin = False
-    usr = User.objects.filter(uid=str(request.headers['UID']))
-    Userializer = userSerializer(usr, many=True)
-    for x in Userializer.data:
-        _user_id = x.get('contactId')
-        _user_admin = x.get('admin')
+    if 'UID' in request.headers:
+        usr = User.objects.filter(uid=str(request.headers['UID']))
+        Userializer = userSerializer(usr, many=True)
+        for x in Userializer.data:
+            _user_id = x.get('contactId')
+            _user_admin = x.get('admin')
 
-    if _user_admin == True:
-        orders = Order.objects.all().order_by('order_number')
-        serializer = orderSerializer(orders, many=True)
-        return Response(serializer.data)
+        if _user_admin == True:
+            orders = Order.objects.all().order_by('order_number')
+            serializer = orderSerializer(orders, many=True)
+            return Response(serializer.data)
 
-    if _user_admin == False:
-        orders = Order.objects.filter(
-            contactId=_user_id).order_by('order_number')
-        serializer = orderSerializer(orders, many=True)
-        return Response(serializer.data)
+        if _user_admin == False:
+            orders = Order.objects.filter(
+                contactId=_user_id).order_by('order_number')
+            serializer = orderSerializer(orders, many=True)
+            return Response(serializer.data)
+    else:
+        return Response('{}')
 
 
 @ api_view(['GET'])

@@ -2,8 +2,7 @@ from rest_framework import serializers
 from IraqiStore.models import AccountContacts, File, LOV, Account, Contact, Delivery, LegalDocument, News, Notification, NotificationRecipient, Order, OrderItem, Product, Inventory, Quote, QutoeItem, User
 
 
-# Serializers define the API representation.
-
+# Serializers define the API representation.s
 
 class FileSerializer(serializers.Serializer):
     file = serializers.FileField(max_length=None, allow_empty_file=False)
