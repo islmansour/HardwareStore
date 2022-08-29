@@ -107,21 +107,23 @@ def get_single_user(request, pk):
 def upsert_user(request, pk):
     recordId = int(-1)
     try:
-        record = User.objects.get(id=pk)
+        record = User.objects.filter(uid=pk).first()
+        request.data.update({"id": record.id})
+
         serializer = userSerializer(instance=record, data=request.data)
+      #  print(serializer.data)
         if serializer.is_valid():
             record = serializer.save()
             recordId = record.id
+
     except:
         try:
             serializer = userSerializer(data=request.data)
-            logging.debug(request.data)
 
             if serializer.is_valid():
                 record = serializer.save()
                 recordId = record.id
-        except Exception as e:
-            logging.debug('*** upsert_user :' + e)
+        except:
             HttpResponse('Error while upserting a contact.')
 
     return HttpResponse(str(recordId))
@@ -480,7 +482,7 @@ def upsert_order(request, pk):
             if serializer.is_valid():
                 record = serializer.save()
                 recordId = record.id
-                #usr = User.objects.filter(uid=str(request.headers['UID']))
+                # usr = User.objects.filter(uid=str(request.headers['UID']))
                 usr = User.objects.all()
 
                 Userializer = userSerializer(usr, many=True)
