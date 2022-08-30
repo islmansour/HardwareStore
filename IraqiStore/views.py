@@ -462,8 +462,8 @@ def get_orders_by_contact(request, contactId):
 
 @ api_view(['GET'])
 def get_single_order(request, pk):
-    orders = Order.objects.get(id=pk)
-    serializer = orderSerializer(orders, many=False)
+    orders = Order.objects.filter(id=int(pk))
+    serializer = orderSerializer(orders, many=True)
     return Response(serializer.data)
 
 
@@ -492,7 +492,8 @@ def upsert_order(request, pk):
                         _notify = Notification.objects.create(
                             entity="admin", entityId=recordId, message="new_order_added")
                         nofSer = notificationsSerializer(data=_notify)
-                        nofSer.save()
+                        if nofSer.is_valid():
+                            nofSer.save()
 
         except Exception as e:
             logging.debug(e)
