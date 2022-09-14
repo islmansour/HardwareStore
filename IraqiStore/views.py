@@ -4,17 +4,23 @@ import io
 import json
 from pathlib import Path
 from django.core.files import File
-
 from django.shortcuts import render
 from django.http import HttpResponse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from IraqiStore.models import Notification, LOV, Account, AccountContacts, Contact, Delivery, Inventory, LegalDocument, News, NotificationRecipient, Order, OrderItem, Product, Quote, QutoeItem, User
 from .serializers import AccountContactSerializer, FileSerializer, accountSerializer, contactSerializer, deliverySerializer, inventorySerializer, legalDocSerializer, lovSerializer, newsSerializer, notificationRecipientSerializer, notificationsSerializer, orderItemSerializer, orderSerializer, productSerializer, quoteItemSerializer, quoteSerializer, userSerializer
-
 from rest_framework import viewsets
 from rest_framework import status
 from rest_framework.response import Response
+
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import auth
+
+cred = credentials.Certificate('pdfs/serviceAccountKey.json')
+
+firebase_admin.initialize_app(cred)
 
 
 class FileUploadViewSet(viewsets.ViewSet):
@@ -106,24 +112,53 @@ def get_single_user(request, pk):
 @ api_view(['POST'])
 def upsert_user(request, pk):
     recordId = int(-1)
+
     try:
+
         record = User.objects.filter(uid=pk).first()
         request.data.update({"id": record.id})
 
         serializer = userSerializer(instance=record, data=request.data)
-      #  print(serializer.data)
         if serializer.is_valid():
             record = serializer.save()
             recordId = record.id
 
-    except:
+        try:
+            user = auth.create_user(
+                #  email='user@example.com',
+                email_verified=False,
+                phone_number='+972'+record.uid,
+                password='secretPassword',
+                display_name=record.uid,
+                # photo_url='http://www.example.com/12345678/photo.png',
+                disabled=False)
+        except Exception as inst2:
+            print(type(inst2))    # the exception instance
+            print(inst2.args)     # arguments stored in .args
+            print(inst2)
+
+    except Exception as inst:
+
         try:
             serializer = userSerializer(data=request.data)
 
             if serializer.is_valid():
                 record = serializer.save()
                 recordId = record.id
-        except:
+
+            user = auth.create_user(
+                #  email='user@example.com',
+                email_verified=False,
+                phone_number='+972'+record.uid,
+                password='secretPassword',
+                display_name=record.uid,
+                # photo_url='http://www.example.com/12345678/photo.png',
+                disabled=False)
+
+        except Exception as inst:
+            print(type(inst))    # the exception instance
+            print(inst.args)     # arguments stored in .args
+            print(inst)
             HttpResponse('Error while upserting a contact.')
 
     return HttpResponse(str(recordId))
@@ -152,13 +187,23 @@ def upsert_product(request, pk):
         if serializer.is_valid():
             record = serializer.save()
             recordId = record.id
-    except:
+    except:     # arguments stored in .args
+
         try:
+
             serializer = productSerializer(data=request.data)
             if serializer.is_valid():
                 record = serializer.save()
                 recordId = record.id
-        except:
+                _notify = Notification.objects.create(
+                    entity="product", entityId=recordId, message="new_product_added")
+                nofSer = notificationsSerializer(data=_notify)
+                nofSer.save()
+
+        except Exception as inst:
+            print(type(inst))    # the exception instance
+            print(inst.args)     # arguments stored in .args
+            print(inst)
             HttpResponse('Error while upserting a product.')
 
     return HttpResponse(str(recordId))
@@ -262,7 +307,6 @@ def upsert_account(request, pk):
         if serializer.is_valid():
             record = serializer.save()
             recordId = record.id
-            print(serializer.data)
 
     except Exception as e:
         try:
@@ -281,7 +325,6 @@ def get_account_contacts(request, pk):
         accountId=int(pk)).values_list('contactId', flat=True))
     relatedContacts = Contact.objects.filter(id__in=results)
     serializer = contactSerializer(relatedContacts, many=True)
-
     return Response(serializer.data)
 
 
@@ -298,12 +341,14 @@ def get_contact_accounts(request, pk):
 @ api_view(['POST'])
 def insert_account_contact(request):
     recordId = int(-1)
-
+    print(request.data)
     try:
         serializer = AccountContactSerializer(data=request.data)
         if serializer.is_valid():
             record = serializer.save()
             recordId = record.id
+        else:
+            print(({"status": "error", "data": serializer.errors}))
 
     except Exception as e:
         return HttpResponse('Error while inserting an AccountContactSerializer.', status=400)
@@ -433,13 +478,13 @@ def get_orders(request):
             _user_admin = x.get('admin')
 
         if _user_admin == True:
-            orders = Order.objects.all().order_by('order_number')
+            orders = Order.objects.all().order_by('-order_number')
             serializer = orderSerializer(orders, many=True)
             return Response(serializer.data)
 
         if _user_admin == False:
             orders = Order.objects.filter(
-                contactId=_user_id).order_by('order_number')
+                contactId=_user_id).order_by('-order_number')
             serializer = orderSerializer(orders, many=True)
             return Response(serializer.data)
     else:
@@ -455,7 +500,8 @@ def get_orders_by_account(request, accountId):
 
 @ api_view(['GET'])
 def get_orders_by_contact(request, contactId):
-    orders = Order.objects.filter(contactId=int(contactId))
+    orders = Order.objects.filter(
+        contactId=int(contactId)).order_by("-created")
     serializer = orderSerializer(orders, many=True)
     return Response(serializer.data)
 
@@ -476,7 +522,28 @@ def upsert_order(request, pk):
         if serializer.is_valid():
             record = serializer.save()
             recordId = record.id
-    except Exception as e:
+            contacts = Contact.objects.filter(
+                id=serializer.initial_data.get('contactId'))
+
+            _conSer = contactSerializer(contacts, many=True)
+            for con in _conSer.data:
+              #  if con.get('id')==record.get('contactId'):
+                usr = User.objects.filter(uid=con.get('phone'))
+
+                Userializer = userSerializer(usr, many=True)
+                if serializer.initial_data.get('status') == 'loaded':
+                    _msg = 'order_loaded'
+                else:
+                    _msg = 'order_loaded'
+
+                for x in Userializer.data:
+                    _notify = Notification.objects.create(target=x.get('id'),
+                                                          entity="client", entityId=recordId, message=_msg)
+                    nofSer = notificationsSerializer(data=_notify)
+                    if nofSer.is_valid():
+                        nofSer.save()
+    except Exception as inst:
+
         try:
             serializer = orderSerializer(data=request.data)
             if serializer.is_valid():
@@ -561,7 +628,7 @@ def get_news(request):
 def get_active_news(request):
     news = News.objects.filter(active=True)
     serializer = newsSerializer(news, many=True)
-    print(serializer.data)
+
     return Response(serializer.data)
 
 
@@ -660,7 +727,6 @@ def get_single_delivery(request, pk):
 @ api_view(['POST'])
 def upsert_delivery(request, pk):
     recordId = int(-1)
-    print(request.data)
 
     try:
         record = Delivery.objects.get(id=pk)

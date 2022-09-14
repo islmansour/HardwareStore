@@ -47,7 +47,8 @@ class inventorySerializer(serializers.ModelSerializer):
 class contactSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contact
-        fields = '__all__'
+        fields = ['id', 'first_name', 'last_name', 'accountId', 'phone', 'phone2', 'email',
+                  'street', 'street2', 'pobox', 'zip', 'town', 'active', 'created', 'created_by']
 
 
 class legalDocSerializer(serializers.ModelSerializer):

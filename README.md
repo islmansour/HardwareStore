@@ -92,6 +92,7 @@ Add titles for each icon
     - Upsert Account tabs - DONE
     - Contact upsert tabs - DONE
 
+
 Add Legal Document to contacts Tab
 
 Add Chat 
@@ -100,16 +101,23 @@ Cron jobs for push notifications
   Admin side:
     - client first login DONE
     - client new order DONE
-    - client sign delivery
+    - client sign delivery 
     - client sign agreement(s)
     - client modified order or quote DONE - no quotes
   Client Side:
-    - order loading process has began
-    - new ad/new prod/
+    - order loading process has began - DONE
+    - new ad/new prod/ (AD: Done, PROD: Done )
     - notify client of agreements they need to sign
 
 
     [BUG]
-    AUTO LOGIN
+    AUTO LOGIN - FIXED
 
+    10-09-22
+    ---------
+    Add more details on delivery in Admin->delivery screen
+    BARCODE creater per Order, this is generated at the client's side.
+    BARCODE reader, delviery guy will scan order from client's phone to approve client received the items.
+    Dropdown for category when creating a new product
+    Hide quotes from admin
 

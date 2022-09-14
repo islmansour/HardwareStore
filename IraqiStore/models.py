@@ -106,6 +106,8 @@ class Inventory(models.Model):
 class CronTest(models.Model):
     text = models.CharField(max_length=500)
 
+# whenever you add a field here - make sure you add it to serialzer too.
+
 
 class Contact(models.Model):
     first_name = models.CharField(max_length=50)
@@ -273,6 +275,21 @@ class File(models.Model):
     file = models.FileField(blank=False, null=False)
     remark = models.CharField(max_length=20)
     timestamp = models.DateTimeField(auto_now_add=True)
+
+
+class User(models.Model):
+    uid = models.CharField(max_length=256, blank=True, null=True)
+    token = models.TextField(blank=True, null=True)
+    contactId = models.ForeignKey(
+        Contact, on_delete=models.DO_NOTHING, related_name='userContact', blank=True, null=True)
+    active = models.BooleanField(default=True)
+    admin = models.BooleanField(default=False)
+    created = models.DateTimeField(default=now, editable=False)  # 5
+    created_by = models.IntegerField(blank=True, null=True)
+    userType = models.CharField(
+        default="production", max_length=50, blank=True, null=True)
+    language = models.CharField(
+        default="he", max_length=50, blank=True, null=True)
 
 
 class AccountContacts(models.Model):
