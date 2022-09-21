@@ -29,7 +29,7 @@ urlpatterns = [
     path('active_news_list', views.get_active_news),
     path('delivery_list', views.get_deliverys),
     path('delivery_list_by_account', views.get_deliverys_by_account),
-    path('delivery_list_by_contact', views.get_deliverys_by_contact),
+    path('delivery_list_by_contact/<str:pk>', views.get_deliverys_by_contact),
     path('single_product/<str:pk>', views.get_single_product),
     path('single_inventory/<str:pk>', views.get_single_inventory),
     path('single_contact/<str:pk>', views.get_single_contact),

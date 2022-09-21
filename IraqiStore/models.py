@@ -154,6 +154,7 @@ class Delivery(models.Model):
     status = models.CharField(
         max_length=32,
     )
+    qrData = models.CharField(max_length=255, blank=True, null=True)
     orderId = models.IntegerField(blank=True, null=True)
     wazeLink = models.CharField(max_length=255, blank=True, null=True)
     approvalLink = models.CharField(max_length=255, blank=True, null=True)

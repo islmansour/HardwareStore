@@ -711,8 +711,8 @@ def get_deliverys_by_account(request, accountId):
 
 
 @ api_view(['GET'])
-def get_deliverys_by_contact(request, contactId):
-    deliverys = Delivery.objects.filter(contactId=int(contactId))
+def get_deliverys_by_contact(request, pk):
+    deliverys = Delivery.objects.filter(contactId=int(pk))
     serializer = deliverySerializer(deliverys, many=True)
     return Response(serializer.data)
 
