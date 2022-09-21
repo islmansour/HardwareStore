@@ -147,10 +147,8 @@ class Account(models.Model):
 
 class Delivery(models.Model):
     date = models.DateTimeField()
-    accountId = models.ForeignKey(
-        Account, on_delete=models.DO_NOTHING, blank=True, null=True)
-    contactId = models.ForeignKey(
-        Contact, on_delete=models.DO_NOTHING, blank=True, null=True)
+    accountId = models.IntegerField(blank=True, null=True)
+    contactId = models.IntegerField(blank=True, null=True)
     status = models.CharField(
         max_length=32,
     )
