@@ -62,5 +62,11 @@ urlpatterns = [
          views.delete_account_contact),
     path('getPDF/<str:file>', views.getPDF),
     path('upload/', include(router.urls)),
+    path('upsert_message/<str:pk>', views.upsert_message),
+    path('get_message_by_contact/<str:pk>', views.get_message_by_contact),
+    path('get_unread_message_by_contact/<str:pk>',
+         views.get_unread_message_by_contact)
+
+
 
 ]

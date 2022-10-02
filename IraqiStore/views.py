@@ -4,12 +4,14 @@ import io
 import json
 from pathlib import Path
 from django.core.files import File
+from django.dispatch import receiver
 from django.shortcuts import render
 from django.http import HttpResponse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from IraqiStore.models import Notification, LOV, Account, AccountContacts, Contact, Delivery, Inventory, LegalDocument, News, NotificationRecipient, Order, OrderItem, Product, Quote, QutoeItem, User
-from .serializers import AccountContactSerializer, FileSerializer, accountSerializer, contactSerializer, deliverySerializer, inventorySerializer, legalDocSerializer, lovSerializer, newsSerializer, notificationRecipientSerializer, notificationsSerializer, orderItemSerializer, orderSerializer, productSerializer, quoteItemSerializer, quoteSerializer, userSerializer
+#from zmq import Message
+from IraqiStore.models import Message, Notification, LOV, Account, AccountContacts, Contact, Delivery, Inventory, LegalDocument, News, NotificationRecipient, Order, OrderItem, Product, Quote, QutoeItem, User
+from .serializers import AccountContactSerializer, FileSerializer, MessageSerializer, accountSerializer, contactSerializer, deliverySerializer, inventorySerializer, legalDocSerializer, lovSerializer, newsSerializer, notificationRecipientSerializer, notificationsSerializer, orderItemSerializer, orderSerializer, productSerializer, quoteItemSerializer, quoteSerializer, userSerializer
 from rest_framework import viewsets
 from rest_framework import status
 from rest_framework.response import Response
@@ -17,6 +19,7 @@ from rest_framework.response import Response
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import auth
+
 
 cred = credentials.Certificate('pdfs/serviceAccountKey.json')
 
@@ -781,3 +784,67 @@ def getPDF(request, file):
             filename)
 
         return response
+
+
+@ api_view(['GET'])
+def get_message_by_contact(request, pk):
+    try:
+
+        messages = Message.objects.filter(sender=int(
+            pk)) | Message.objects.filter(receiver=int(pk)).order_by('-time')
+
+        serializer = MessageSerializer(messages, many=True)
+
+    except Exception as inst2:
+        print(type(inst2))    # the exception instance
+        print(inst2.args)     # arguments stored in .args
+        print(inst2)
+
+    return Response(serializer.data)
+
+
+@ api_view(['GET'])
+def get_unread_message_by_contact(request, pk):
+    try:
+        messages = Message.objects.filter(unread=True).filter(receiver=int(
+            0)).order_by('time')
+
+        serializer = MessageSerializer(messages, many=True)
+
+    except Exception as inst2:
+        print(type(inst2))    # the exception instance
+        print(inst2.args)     # arguments stored in .args
+        print(inst2)
+
+    return Response(serializer.data)
+
+
+@ api_view(['POST'])
+def upsert_message(request, pk):
+    recordId = int(-1)
+
+    try:
+        record = Message.objects.get(id=pk)
+        serializer = MessageSerializer(instance=record, data=request.data)
+
+        if serializer.is_valid():
+            record = serializer.save()
+            recordId = record.id
+    except Exception as inst:
+        print(type(inst))    # the exception instance
+        print(inst.args)     # arguments stored in .args
+        print(inst)
+
+        try:
+            serializer = MessageSerializer(data=request.data)
+            if serializer.is_valid():
+                record = serializer.save()
+                recordId = record.id
+
+        except Exception as inst:
+            print(type(inst))    # the exception instance
+            print(inst.args)     # arguments stored in .args
+            print(inst)
+            HttpResponse('Error while upserting an Message item.')
+
+    return HttpResponse(str(recordId))

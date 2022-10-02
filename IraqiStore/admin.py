@@ -1,5 +1,5 @@
 from django.contrib import admin
-from IraqiStore.models import AccountContacts, CronTest, Delivery, LegalDocument, News, LOV, Account, Contact, Inventory, Notification, NotificationRecipient, Order, OrderItem, Product, Quote, QutoeItem, User
+from IraqiStore.models import AccountContacts, Message, CronTest, Delivery, LegalDocument, News, LOV, Account, Contact, Inventory, Notification, NotificationRecipient, Order, OrderItem, Product, Quote, QutoeItem, User
 
 
 # Register your models here.
@@ -20,3 +20,4 @@ admin.site.register(AccountContacts)
 admin.site.register(CronTest)
 admin.site.register(Notification)
 admin.site.register(NotificationRecipient)
+admin.site.register(Message)

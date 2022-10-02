@@ -301,3 +301,11 @@ class AccountContacts(models.Model):
 
     class Meta:
         unique_together = ('accountId', 'contactId')
+
+
+class Message(models.Model):
+    receiver = models.IntegerField(blank=True, null=True)
+    sender = models.IntegerField(blank=True, null=True)
+    time = models.DateTimeField(default=now, editable=False)
+    text = models.CharField(max_length=256, blank=True, null=True)
+    unread = models.BooleanField(default=True)
